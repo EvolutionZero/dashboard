@@ -33,7 +33,7 @@ public class SeleniumMain {
 
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
-        new TouTiaoScreenshot().exec();
+        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
     }
 
     public static void caa(String[] args) {
