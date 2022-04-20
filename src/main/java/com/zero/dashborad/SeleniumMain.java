@@ -1,5 +1,6 @@
 package com.zero.dashborad;
 
+import com.zero.dashborad.component.FixedHeaderScreenshot;
 import com.zero.dashborad.strategy.TouTiaoViewportPastingDecorator;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -36,6 +37,11 @@ public class SeleniumMain {
 
 
     public static void main(String[] args) {
+        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
+        new FixedHeaderScreenshot(64).exec();
+    }
+
+    public static void caa(String[] args) {
         // TODO Auto-generated method stub
 //        WebDriver driver;
         System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
