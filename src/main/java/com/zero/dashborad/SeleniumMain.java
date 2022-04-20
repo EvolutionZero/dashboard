@@ -1,19 +1,14 @@
 package com.zero.dashborad;
 
-import com.zero.dashborad.component.FixedHeaderScreenshot;
-import com.zero.dashborad.strategy.TouTiaoViewportPastingDecorator;
+import com.zero.dashborad.component.TouTiaoScreenshot;
+import com.zero.dashborad.strategy.FixedHeaderViewportPastingDecorator;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
-import ru.yandex.qatools.ashot.coordinates.Coords;
-import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
-import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
 import ru.yandex.qatools.ashot.shooting.SimpleShootingStrategy;
-import ru.yandex.qatools.ashot.shooting.ViewportPastingDecorator;
-import ru.yandex.qatools.ashot.shooting.cutter.FixedCutStrategy;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,7 +33,7 @@ public class SeleniumMain {
 
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
-        new FixedHeaderScreenshot(64).exec();
+        new TouTiaoScreenshot().exec();
     }
 
     public static void caa(String[] args) {
@@ -87,7 +82,7 @@ public class SeleniumMain {
 //            Set<Coords> shootingAreas = new HashSet<>();
 //            shootingAreas.add(new Coords(0, 60, 1920, 1200));
 //            simpleShootingStrategy.prepareCoords(shootingAreas);
-            TouTiaoViewportPastingDecorator shootingStrategy = (new TouTiaoViewportPastingDecorator(new SimpleShootingStrategy(), 64)).withScrollTimeout(100);
+            FixedHeaderViewportPastingDecorator shootingStrategy = (new FixedHeaderViewportPastingDecorator(new SimpleShootingStrategy(), 64)).withScrollTimeout(100);
 //            ShootingStrategy shootingStrategy = ShootingStrategies.viewportPasting(100);
 //            shootingStrategy.prepareCoords(shootingAreas);
             AShot aShot = new AShot()

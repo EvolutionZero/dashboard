@@ -12,7 +12,7 @@ import ru.yandex.qatools.ashot.coordinates.Coords;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
 import ru.yandex.qatools.ashot.util.InnerScript;
 
-public class TouTiaoViewportPastingDecorator implements ShootingStrategy {
+public class FixedHeaderViewportPastingDecorator implements ShootingStrategy {
     protected int scrollTimeout = 0;
     private Coords shootingArea;
 
@@ -27,12 +27,12 @@ public class TouTiaoViewportPastingDecorator implements ShootingStrategy {
     }
 
 
-    public TouTiaoViewportPastingDecorator(ShootingStrategy strategy, int headerHeightPx) {
+    public FixedHeaderViewportPastingDecorator(ShootingStrategy strategy, int headerHeightPx) {
         this.shootingStrategy = strategy;
         this.headerHeightPx = headerHeightPx;
     }
 
-    public TouTiaoViewportPastingDecorator withScrollTimeout(int scrollTimeout) {
+    public FixedHeaderViewportPastingDecorator withScrollTimeout(int scrollTimeout) {
         this.scrollTimeout = scrollTimeout;
         return this;
     }

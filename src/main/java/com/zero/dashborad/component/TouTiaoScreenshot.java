@@ -1,8 +1,7 @@
 package com.zero.dashborad.component;
 
-import com.zero.dashborad.strategy.TouTiaoViewportPastingDecorator;
+import com.zero.dashborad.strategy.FixedHeaderViewportPastingDecorator;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -19,13 +18,9 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.Date;
 
-public class FixedHeaderScreenshot {
+public class TouTiaoScreenshot {
 
-    private int headerHeightPx;
-
-    public FixedHeaderScreenshot(int headerHeightPx) {
-        this.headerHeightPx = headerHeightPx;
-    }
+    private static final int HEADER_HEIGHT_PX = 64;
 
     public void exec(){
         ChromeOptions options = new ChromeOptions();
@@ -33,7 +28,7 @@ public class FixedHeaderScreenshot {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 //        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
-        TouTiaoViewportPastingDecorator shootingStrategy = (new TouTiaoViewportPastingDecorator(new SimpleShootingStrategy(), 64)).withScrollTimeout(100);
+        FixedHeaderViewportPastingDecorator shootingStrategy = (new FixedHeaderViewportPastingDecorator(new SimpleShootingStrategy(), HEADER_HEIGHT_PX)).withScrollTimeout(100);
         driver.get("https://www.toutiao.com/article/7087963907754590757");
 //        driver.get("https://www.toutiao.com/article/7088274288377233955");
         WebDriverWait wait = new WebDriverWait(driver,5);
