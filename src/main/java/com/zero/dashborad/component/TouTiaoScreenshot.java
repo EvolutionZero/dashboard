@@ -28,8 +28,8 @@ public class TouTiaoScreenshot {
 //        options.setBinary("D:\\develop\\chrome-driver\\98.0.4758.102_chrome64_stable_windows_installer.exe");
         if(new OsInfo().isLinux()){
             options.setBinary("/opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm");
+            options.addArguments("--headless", "--no-sandbox");
         }
-//        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "start-maximized", "disable-infobars");
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
