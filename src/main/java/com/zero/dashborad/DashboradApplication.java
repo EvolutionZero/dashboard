@@ -20,11 +20,11 @@ public class DashboradApplication {
             System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
         } else {
 //            System.setProperty("webdriver.chrome.driver", "/opt/chromedriver");
-//            System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
+            System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
         }
         log.info("头条截图");
 //        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
-        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+//        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
         log.info("QQ截图");
         new LongPictureScreenshot().exec("https://www.qq.com", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
         log.info("转PDF");

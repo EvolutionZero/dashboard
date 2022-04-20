@@ -1,7 +1,6 @@
 FROM selenium/standalone-chrome:98.0-chromedriver-98.0-20220208
 VOLUME /tmp
 ADD ./target/dashborad*.jar dashborad.jar
-RUN sudo su root
 #RUN ln -snf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
 #    && echo "Asia/Shanghai" > /etc/timezone
 

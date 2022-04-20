@@ -28,7 +28,7 @@ public class TouTiaoScreenshot {
 //        options.setBinary("D:\\develop\\chrome-driver\\98.0.4758.102_chrome64_stable_windows_installer.exe");
         if(new OsInfo().isLinux()){
 //            options.setBinary("/opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm");
-//            options.setBinary("/opt/google/chrome/chrome");
+            options.setBinary("/opt/google/chrome/chrome");
             options.addArguments("--headless", "--no-sandbox");
         }
         WebDriver driver = new ChromeDriver(options);

@@ -8,7 +8,7 @@ docker build -t  dashboard .
 
 // 启动命令
 
-docker run --name my_dashboard  -p 8888:8080 -d dashboard
+docker run --name my_dashboard --shm-size="500M"  -p 8888:8080 -d dashboard
 
 // 进入容器
 docker exec -it xxxx /bin/bash
