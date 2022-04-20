@@ -16,6 +16,9 @@ public class TouTiaoViewportPastingDecorator implements ShootingStrategy {
     protected int scrollTimeout = 0;
     private Coords shootingArea;
 
+    private int headerHeightPx;
+
+
     private ShootingStrategy shootingStrategy;
 
 
@@ -24,8 +27,9 @@ public class TouTiaoViewportPastingDecorator implements ShootingStrategy {
     }
 
 
-    public TouTiaoViewportPastingDecorator(ShootingStrategy strategy) {
+    public TouTiaoViewportPastingDecorator(ShootingStrategy strategy, int headerHeightPx) {
         this.shootingStrategy = strategy;
+        this.headerHeightPx = headerHeightPx;
     }
 
     public TouTiaoViewportPastingDecorator withScrollTimeout(int scrollTimeout) {
@@ -45,7 +49,6 @@ public class TouTiaoViewportPastingDecorator implements ShootingStrategy {
         this.shootingArea = this.getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
         BufferedImage finalImage = new BufferedImage(pageWidth, this.shootingArea.height, 5);
         Graphics2D graphics = finalImage.createGraphics();
-        int scrollTimes = (int)Math.ceil(this.shootingArea.getHeight() / (double)viewportHeight);
 
         boolean first = true;
 
@@ -54,38 +57,25 @@ public class TouTiaoViewportPastingDecorator implements ShootingStrategy {
             this.scrollVertically(js, curY);
             this.waitForScrolling();
             BufferedImage part = this.getShootingStrategy().getScreenshot(wd);
-//            graphics.drawImage(part, 0, this.getCurrentScrollY(js) - (first ? this.shootingArea.y : 60), (ImageObserver)null);
-            int bandHeigh = 64;
             graphics.drawImage(
                     part,
-//                    0, first ? 0 : 60,
-//                    0, pageHeight,
-//                    pageWidth, first ? 0 : 60,
-//                    pageWidth, pageHeight,
-                    0, curY + (first ? 0 : bandHeigh),
+                    0, curY + (first ? 0 : headerHeightPx),
                     pageWidth, curY + (pageHeight) ,
-                    0, first ? 0 : bandHeigh,
+                    0, first ? 0 : headerHeightPx,
                     pageWidth, pageHeight,
                     (ImageObserver)null);
 
             if(first){
-                curY = this.shootingArea.y + viewportHeight  - bandHeigh;
+                curY = this.shootingArea.y + viewportHeight  - headerHeightPx;
 
             } else {
-                curY = curY + viewportHeight - bandHeigh;
+                curY = curY + viewportHeight - headerHeightPx;
             }
             if(curY  >= this.shootingArea.getHeight()){
                 break;
             }
             first = false;
         }
-//        for(int n = 0; n < scrollTimes; ++n) {
-//            this.scrollVertically(js, this.shootingArea.y + viewportHeight * n);
-//            this.waitForScrolling();
-//            BufferedImage part = this.getShootingStrategy().getScreenshot(wd);
-//            graphics.drawImage(part, 0, this.getCurrentScrollY(js) - this.shootingArea.y, (ImageObserver)null);
-//        }
-
         graphics.dispose();
         return finalImage;
     }

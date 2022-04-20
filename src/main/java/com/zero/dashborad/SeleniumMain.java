@@ -87,7 +87,7 @@ public class SeleniumMain {
 //            Set<Coords> shootingAreas = new HashSet<>();
 //            shootingAreas.add(new Coords(0, 60, 1920, 1200));
 //            simpleShootingStrategy.prepareCoords(shootingAreas);
-            TouTiaoViewportPastingDecorator shootingStrategy = (new TouTiaoViewportPastingDecorator(new SimpleShootingStrategy())).withScrollTimeout(100);
+            TouTiaoViewportPastingDecorator shootingStrategy = (new TouTiaoViewportPastingDecorator(new SimpleShootingStrategy(), 64)).withScrollTimeout(100);
 //            ShootingStrategy shootingStrategy = ShootingStrategies.viewportPasting(100);
 //            shootingStrategy.prepareCoords(shootingAreas);
             AShot aShot = new AShot()

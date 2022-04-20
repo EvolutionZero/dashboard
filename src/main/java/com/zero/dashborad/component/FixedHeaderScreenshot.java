@@ -33,7 +33,7 @@ public class FixedHeaderScreenshot {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 //        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
-        TouTiaoViewportPastingDecorator shootingStrategy = (new TouTiaoViewportPastingDecorator(new SimpleShootingStrategy())).withScrollTimeout(100);
+        TouTiaoViewportPastingDecorator shootingStrategy = (new TouTiaoViewportPastingDecorator(new SimpleShootingStrategy(), 64)).withScrollTimeout(100);
         driver.get("https://www.toutiao.com/article/7087963907754590757");
 //        driver.get("https://www.toutiao.com/article/7088274288377233955");
         WebDriverWait wait = new WebDriverWait(driver,5);
