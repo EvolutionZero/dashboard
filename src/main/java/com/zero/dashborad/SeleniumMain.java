@@ -1,5 +1,6 @@
 package com.zero.dashborad;
 
+import com.zero.dashborad.component.LongPictureScreenshot;
 import com.zero.dashborad.component.TouTiaoScreenshot;
 import com.zero.dashborad.strategy.FixedHeaderViewportPastingDecorator;
 import org.openqa.selenium.*;
@@ -33,7 +34,9 @@ public class SeleniumMain {
 
     public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
-        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+//        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
+//        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+        new LongPictureScreenshot().exec("https://www.qq.com", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
     }
 
     public static void caa(String[] args) {
@@ -105,8 +108,8 @@ public class SeleniumMain {
     }
 
     private static void toPdf(){
-//        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
-        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
+//        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
         try
         {
             ChromeOptions options = new ChromeOptions();

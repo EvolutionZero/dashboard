@@ -23,14 +23,14 @@ public class TouTiaoScreenshot {
 
     public void exec(String url, String filePath){
         ChromeOptions options = new ChromeOptions();
+//        options.setHeadless(true);
+//        options.setBinary("D:\\develop\\chrome-driver\\98.0.4758.102_chrome64_stable_windows_installer.exe");
+//        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "start-maximized", "disable-infobars");
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-//        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
-        FixedHeaderViewportPastingDecorator shootingStrategy = (new FixedHeaderViewportPastingDecorator(new SimpleShootingStrategy(), HEADER_HEIGHT_PX)).withScrollTimeout(100);
+        FixedHeaderViewportPastingDecorator shootingStrategy = (new FixedHeaderViewportPastingDecorator(new SimpleShootingStrategy(), HEADER_HEIGHT_PX));
         driver.get(url);
-//        driver.get("https://www.toutiao.com/article/7087963907754590757");
-//        driver.get("https://www.toutiao.com/article/7088274288377233955");
         WebDriverWait wait = new WebDriverWait(driver,5);
         wait.until(ExpectedConditions.elementToBeClickable(By.className("article-content"))).click();
         AShot aShot = new AShot()
@@ -41,7 +41,6 @@ public class TouTiaoScreenshot {
         BufferedImage image = screenshot.getImage();
         try {
             ImageIO.write(image, "PNG", new File(filePath));
-//            ImageIO.write(image, "PNG", new File("D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
