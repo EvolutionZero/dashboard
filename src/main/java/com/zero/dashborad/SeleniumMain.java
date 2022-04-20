@@ -2,6 +2,7 @@ package com.zero.dashborad;
 
 import com.zero.dashborad.component.LongPictureScreenshot;
 import com.zero.dashborad.component.TouTiaoScreenshot;
+import com.zero.dashborad.component.Web2Pdf;
 import com.zero.dashborad.strategy.FixedHeaderViewportPastingDecorator;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -36,7 +37,8 @@ public class SeleniumMain {
         System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
 //        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
 //        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
-        new LongPictureScreenshot().exec("https://www.qq.com", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+//        new LongPictureScreenshot().exec("https://www.qq.com", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+        new Web2Pdf().exec("https://www.qq.com", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".pdf");
     }
 
     public static void caa(String[] args) {
