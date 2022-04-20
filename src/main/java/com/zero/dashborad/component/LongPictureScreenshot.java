@@ -21,7 +21,8 @@ public class LongPictureScreenshot {
     public void exec(String url, String filePath){
         ChromeOptions options = new ChromeOptions();
         if(new OsInfo().isLinux()){
-            options.setBinary("/opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm");
+            //            options.setBinary("/opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm");
+//            options.setBinary("/opt/google/chrome/chrome");
             options.addArguments("--headless", "--no-sandbox");
         }
         WebDriver driver = new ChromeDriver(options);

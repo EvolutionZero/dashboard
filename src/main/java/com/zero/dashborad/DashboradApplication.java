@@ -19,7 +19,8 @@ public class DashboradApplication {
         if(new OsInfo().isWindows()){
             System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
         } else {
-            System.setProperty("webdriver.chrome.driver", "/opt/chromedriver");
+//            System.setProperty("webdriver.chrome.driver", "/opt/chromedriver");
+//            System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
         }
         log.info("头条截图");
 //        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
