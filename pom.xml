@@ -87,6 +87,12 @@
             <artifactId>pdfcrowd</artifactId>
             <version>5.5.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.0.M3</version>
+        </dependency>
 
     </dependencies>
 

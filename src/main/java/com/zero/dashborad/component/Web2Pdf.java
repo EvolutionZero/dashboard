@@ -1,5 +1,6 @@
 package com.zero.dashborad.component;
 
+import cn.hutool.system.OsInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -20,6 +21,9 @@ public class Web2Pdf {
      */
     public void exec(String url, String filePath){
         ChromeOptions options = new ChromeOptions();
+        if(new OsInfo().isLinux()){
+            options.setBinary("/opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm");
+        }
         options.addArguments("--headless");
         ChromeDriver chromeDriver = new ChromeDriver(options);
         chromeDriver.get(url);

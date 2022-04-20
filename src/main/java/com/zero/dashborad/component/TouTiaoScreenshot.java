@@ -1,5 +1,6 @@
 package com.zero.dashborad.component;
 
+import cn.hutool.system.OsInfo;
 import com.zero.dashborad.strategy.FixedHeaderViewportPastingDecorator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -25,6 +26,9 @@ public class TouTiaoScreenshot {
         ChromeOptions options = new ChromeOptions();
 //        options.setHeadless(true);
 //        options.setBinary("D:\\develop\\chrome-driver\\98.0.4758.102_chrome64_stable_windows_installer.exe");
+        if(new OsInfo().isLinux()){
+            options.setBinary("/opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm");
+        }
 //        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage", "start-maximized", "disable-infobars");
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));

@@ -1,5 +1,7 @@
 package com.zero.dashborad;
 
+import cn.hutool.http.useragent.OS;
+import cn.hutool.system.OsInfo;
 import com.zero.dashborad.component.LongPictureScreenshot;
 import com.zero.dashborad.component.TouTiaoScreenshot;
 import com.zero.dashborad.component.Web2Pdf;
@@ -34,11 +36,15 @@ public class SeleniumMain {
 
 
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
+        if(new OsInfo().isWindows()){
+            System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_win32\\chromedriver.exe");
+        } else {
+            System.setProperty("webdriver.chrome.driver", "/opt/chromedriver.exe");
+        }
 //        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
-//        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
-//        new LongPictureScreenshot().exec("https://www.qq.com", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
-        new Web2Pdf().exec("https://www.qq.com", "D:\\temp\\" + "AShot_BBC_Entire_" + new Date().getTime() + ".pdf");
+        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+        new LongPictureScreenshot().exec("https://www.qq.com", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+        new Web2Pdf().exec("https://www.qq.com", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".pdf");
     }
 
     public static void caa(String[] args) {

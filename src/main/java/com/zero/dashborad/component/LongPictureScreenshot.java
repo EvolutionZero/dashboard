@@ -1,5 +1,6 @@
 package com.zero.dashborad.component;
 
+import cn.hutool.system.OsInfo;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -19,6 +20,9 @@ public class LongPictureScreenshot {
 
     public void exec(String url, String filePath){
         ChromeOptions options = new ChromeOptions();
+        if(new OsInfo().isLinux()){
+            options.setBinary("/opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm");
+        }
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
