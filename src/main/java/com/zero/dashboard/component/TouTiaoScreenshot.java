@@ -1,7 +1,7 @@
-package com.zero.dashborad.component;
+package com.zero.dashboard.component;
 
 import cn.hutool.system.OsInfo;
-import com.zero.dashborad.strategy.FixedHeaderViewportPastingDecorator;
+import com.zero.dashboard.strategy.FixedHeaderViewportPastingDecorator;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;

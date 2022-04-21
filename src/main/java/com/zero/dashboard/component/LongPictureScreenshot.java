@@ -1,4 +1,4 @@
-package com.zero.dashborad.component;
+package com.zero.dashboard.component;
 
 import cn.hutool.system.OsInfo;
 import org.openqa.selenium.JavascriptExecutor;

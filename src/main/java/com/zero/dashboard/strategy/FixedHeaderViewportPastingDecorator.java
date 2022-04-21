@@ -1,4 +1,4 @@
-package com.zero.dashborad.strategy;
+package com.zero.dashboard.strategy;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

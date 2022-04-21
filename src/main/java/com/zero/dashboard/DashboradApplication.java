@@ -1,9 +1,9 @@
-package com.zero.dashborad;
+package com.zero.dashboard;
 
 import cn.hutool.system.OsInfo;
-import com.zero.dashborad.component.LongPictureScreenshot;
-import com.zero.dashborad.component.TouTiaoScreenshot;
-import com.zero.dashborad.component.Web2Pdf;
+import com.zero.dashboard.component.LongPictureScreenshot;
+import com.zero.dashboard.component.TouTiaoScreenshot;
+import com.zero.dashboard.component.Web2Pdf;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

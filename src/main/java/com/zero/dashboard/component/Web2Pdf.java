@@ -1,4 +1,4 @@
-package com.zero.dashborad.component;
+package com.zero.dashboard.component;
 
 import cn.hutool.system.OsInfo;
 import lombok.extern.slf4j.Slf4j;

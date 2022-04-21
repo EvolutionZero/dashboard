@@ -1,4 +1,4 @@
-package com.zero.dashborad;
+package com.zero.dashboard;
 
 import org.openqa.selenium.*;
 

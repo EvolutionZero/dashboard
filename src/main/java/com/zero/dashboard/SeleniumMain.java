@@ -1,11 +1,10 @@
-package com.zero.dashborad;
+package com.zero.dashboard;
 
-import cn.hutool.http.useragent.OS;
 import cn.hutool.system.OsInfo;
-import com.zero.dashborad.component.LongPictureScreenshot;
-import com.zero.dashborad.component.TouTiaoScreenshot;
-import com.zero.dashborad.component.Web2Pdf;
-import com.zero.dashborad.strategy.FixedHeaderViewportPastingDecorator;
+import com.zero.dashboard.component.LongPictureScreenshot;
+import com.zero.dashboard.component.TouTiaoScreenshot;
+import com.zero.dashboard.component.Web2Pdf;
+import com.zero.dashboard.strategy.FixedHeaderViewportPastingDecorator;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
