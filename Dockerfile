@@ -8,4 +8,4 @@ ADD ./target/dashboard*.jar dashboard.jar
 #COPY 98.0.4758.102-google-chrome-stable_current_x86_64.rpm /opt/98.0.4758.102-google-chrome-stable_current_x86_64.rpm
 #COPY chromedriver /opt/chromedriver
 COPY ./arthas-bin /opt/selenium/arthas
-ENTRYPOINT ["java", "-Dlog.home=/opt/selenium/", "-Dfile.encoding=UTF-8","-jar","/dashboard.jar"]
+ENTRYPOINT ["java", "-Dlog.home=/opt/selenium/" , "-Duser.timezone=GMT+08", "-Dfile.encoding=UTF-8","-jar","/dashboard.jar"]
