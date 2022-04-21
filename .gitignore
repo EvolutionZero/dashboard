@@ -39,4 +39,4 @@ mvnw.cmd
 generate
 98.0.4758.102-google-chrome-stable_current_x86_64.rpm
 chromedriver
-
+./arthas-bin

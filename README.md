@@ -19,3 +19,9 @@ docker rm -f xxx
 // 容器拷贝文件
 
 docker cp  13941f798a09:/opt/selenium/AShot_BBC_Entire_1650514428435.png    D:/AShot_BBC_Entire_1650514428435.png
+
+// ps -ef 查看java程序的PID再进行启动
+
+ps -ef 
+
+cd /opt/selenium/arthas && java -jar arthas-boot.jar 1
