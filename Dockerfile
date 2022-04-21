@@ -1,5 +1,4 @@
 FROM selenium/standalone-chrome:98.0-chromedriver-98.0-20220208
-VOLUME /tmp
 ADD ./target/dashboard*.jar dashboard.jar
 RUN mkdir /opt/selenium/temp
 RUN mkdir /opt/selenium/logs
