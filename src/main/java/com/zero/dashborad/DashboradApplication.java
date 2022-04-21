@@ -24,11 +24,11 @@ public class DashboradApplication {
         }
         log.info("头条截图");
 //        System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\chromedriver_98.0.4758.102.exe");
-//        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+//        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", "./temp/" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
         log.info("QQ截图");
-        new LongPictureScreenshot().exec("https://www.qq.com", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
+        new LongPictureScreenshot().exec("https://www.qq.com", "./temp/" + "AShot_BBC_Entire_" + new Date().getTime() + ".png");
         log.info("转PDF");
-        new Web2Pdf().exec("https://www.qq.com", "./" + "AShot_BBC_Entire_" + new Date().getTime() + ".pdf");
+        new Web2Pdf().exec("https://www.qq.com", "./temp/" + "AShot_BBC_Entire_" + new Date().getTime() + ".pdf");
         log.info("完成");
     }
 
