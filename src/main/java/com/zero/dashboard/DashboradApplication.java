@@ -22,10 +22,14 @@ public class DashboradApplication {
         } else {
 //            System.setProperty("webdriver.chrome.driver", "/opt/chromedriver");
             System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
-            fileHomePath = "/opt/selenium/";
+            fileHomePath = "/opt/selenium/temp/";
         }
         log.info("头条截图");
-        new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", fileHomePath + "TouTiao_" + new Date().getTime() + ".png");
+        try {
+            new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", fileHomePath + "TouTiao_" + new Date().getTime() + ".png");
+        } catch (Exception e) {
+            log.error("", e);
+        }
         log.info("QQ截图");
         new LongPictureScreenshot().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".png");
         log.info("转PDF");
