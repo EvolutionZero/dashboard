@@ -15,3 +15,7 @@ docker exec -it xxxx /bin/bash
 
 // 删除容器
 docker rm -f xxx 
+
+// 容器拷贝文件
+
+docker cp  13941f798a09:/opt/selenium/AShot_BBC_Entire_1650514428435.png    D:/AShot_BBC_Entire_1650514428435.png
