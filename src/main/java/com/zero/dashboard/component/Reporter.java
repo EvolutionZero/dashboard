@@ -22,7 +22,7 @@ public class Reporter {
         String html = toHtml(params);
         String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/dashboard/" : "./";
         String baseDir = fileHomePath + "report/";
-        String filePath = baseDir + fileName + (fileName.endsWith(".html") ? ".html" : "");
+        String filePath = baseDir + fileName + (fileName.endsWith(".html") ? "" : ".html");
         try {
             FileUtils.forceMkdir(new File(baseDir));
             FileUtils.writeStringToFile(new File(filePath), html, "UTF-8");
