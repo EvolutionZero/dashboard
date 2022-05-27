@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <title>${title}</title>
+</head>
+<body style="height: 100%; margin: 0">
+<div id="kline" style="height: 100%"></div>
+<div id="volume" style="height: 50%"></div>
+<div id="index" style="height: 50%; width: 100%">
+    <div id="macd" style="float:left;height: 100%;width: 50%; border:0px"></div>
+    <div id="kdj" style="float:right;height: 100%;width: 50%; border:0px"></div>
+</div>
+
+<script type="text/javascript">
+    window.onload=function(){
+        drawMACD();
+        drawKDJ();
+    }
+</script>
+<script type="text/javascript" src="./jquery"></script>
+<script type="text/javascript" src="./echarts.zero.js"></script>
+<!-- K线展示 -->
+<script type="text/javascript">
+    var klineChart = echarts.init(document.getElementById('kline'), 'dark', {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    const upColor = '#ec0000';
+    const downColor = '#00da3c';
+    const a = '#D2DBEE';
+
+    function powerEData(data) {
+        var result = [];
+        for (var i = 0, len = data.length; i < len; i++) {
+            var pd = '-' == data[i] ? data[i] : Math.pow(Math.E, data[i]).toFixed(2)
+            result.push(pd);
+        }
+        return result;
+    }
+
+    function splitData(rawData) {
+        let categoryData = [];
+        let values = [];
+        let volumes = [];
+        for (let i = 0; i < rawData.length; i++) {
+            categoryData.push(rawData[i].splice(0, 1)[0]);
+            values.push(rawData[i]);
+            volumes.push([i, rawData[i][4], rawData[i][0] > rawData[i][1] ? 1 : -1]);
+        }
+        return {
+            categoryData: categoryData,
+            values: values,
+            volumes: volumes
+        };
+    }
+
+    function calculateMA(dayCount, data) {
+        var result = [];
+        for (var i = 0, len = data.values.length; i < len; i++) {
+            if (i < dayCount) {
+                result.push('-');
+                continue;
+            }
+            var sum = 0;
+            for (var j = 0; j < dayCount; j++) {
+                sum += data.values[i - j][1];
+            }
+            result.push(+(sum / dayCount).toFixed(3));
+        }
+        return result;
+    }
+    var rawData = ${klineDatas};
+    var klineData = splitData(JSON.parse(rawData));
+    klineChart.setOption(
+            (option = {
+                animation: false,
+                legend: {
+                    bottom: 10,
+                    left: 'center',
+                    data: ['${stockName}', 'MA5', 'MA10', 'MA20', 'MA30']
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    },
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: 10,
+                    textStyle: {
+                        color: '#000'
+                    },
+                    position: function (pos, params, el, elRect, size) {
+                        const obj = {
+                            top: 10
+                        };
+                        obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                        return obj;
+                    }
+                    // extraCssText: 'width: 170px'
+                },
+                axisPointer: {
+                    link: [
+                        {
+                            xAxisIndex: 'all'
+                        }
+                    ],
+                    label: {
+                        backgroundColor: '#777'
+                    }
+                },
+                toolbox: {
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: false
+                        },
+                        brush: {
+                            type: ['lineX', 'clear']
+                        }
+                    }
+                },
+                brush: {
+                    xAxisIndex: 'all',
+                    brushLink: 'all',
+                    outOfBrush: {
+                        colorAlpha: 0.1
+                    }
+                },
+                visualMap: {
+                    show: false,
+                    seriesIndex: 5,
+                    dimension: 2,
+                    pieces: [
+                        {
+                            value: 1,
+                            color: downColor
+                        },
+                        {
+                            value: -1,
+                            color: upColor
+                        }
+                    ]
+                },
+                grid: [
+                    {
+                        left: '10%',
+                        right: '8%',
+                        height: '50%'
+                    },
+                    {
+                        left: '10%',
+                        right: '8%',
+                        top: '63%',
+                        height: '16%'
+                    }
+                ],
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: klineData.categoryData,
+                        boundaryGap: false,
+                        axisLine: {onZero: false},
+                        splitLine: {show: false},
+                        min: 'dataMin',
+                        max: 'dataMax',
+                        axisPointer: {
+                            z: 100
+                        }
+                    },
+                    {
+                        type: 'category',
+                        gridIndex: 1,
+                        data: klineData.categoryData,
+                        boundaryGap: false,
+                        axisLine: {onZero: false},
+                        axisTick: {show: false},
+                        splitLine: {show: false},
+                        axisLabel: {show: false},
+                        min: 'dataMin',
+                        max: 'dataMax'
+                    }
+                ],
+                yAxis: [
+                    {
+                        scale: true,
+                        splitArea: {
+                            show: true
+                        }
+                    },
+                    {
+                        scale: true,
+                        gridIndex: 1,
+                        splitNumber: 2,
+                        axisLabel: {show: false},
+                        axisLine: {show: false},
+                        axisTick: {show: false},
+                        splitLine: {show: false}
+                    }
+                ],
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        xAxisIndex: [0, 1],
+                        start: 0, //下面进度条起始
+                        end: 100 //下面进度条结束
+                    },
+                    {
+                        show: true,
+                        xAxisIndex: [0, 1],
+                        type: 'slider',
+                        top: '85%',
+                        start: 50,
+                        end: 100
+                    }
+                ],
+                series: [
+                    {
+                        name: '${stockName}',
+                        type: 'candlestick',
+                        data: klineData.values,
+                        itemStyle: {
+                            color: upColor,
+                            color0: downColor,
+                            borderColor: undefined,
+                            borderColor0: undefined
+                        },
+                        <!-- tooltip无效 -->
+                        tooltip: {
+                            formatter: function (param) {
+                                param = param[0];
+                                return [
+
+                                    '日期: ' + param.name + '<hr size=1 style="margin: 3px 0">',
+                                    '开盘价: ' + param.data[0] + '<br/>',
+                                    '收盘价: ' + param.data[1] + '<br/>',
+                                    '最低价: ' + param.data[2] + '<br/>',
+                                    '最高价: ' + param.data[3] + '<br/>'
+                                ].join('');
+                            }
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return value instanceof Array ? '' : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA5',
+                        type: 'line',
+                        data: calculateMA(5, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: calculateMA(10, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA20',
+                        type: 'line',
+                        data: calculateMA(20, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA30',
+                        type: 'line',
+                        data: calculateMA(30, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: '交易量',
+                        type: 'bar',
+                        xAxisIndex: 1,
+                        yAxisIndex: 1,
+                        data: klineData.volumes
+                    }
+                ]
+            }),
+            true
+    );
+    klineChart.dispatchAction({
+        type: 'brush',
+        areas: [
+            {
+                brushType: 'lineX',
+                coordRange: ['${focusStartDate}', '${focusEndDate}'], // 主面板聚焦
+                xAxisIndex: 0,
+                brushStyle: {
+                    borderWidth: 1,
+                    color: 'rgba(210,219,238,0.3)',
+                    stroke: 'rgba(210,219,238,0.1)' // 边线颜色透明度设置
+                }
+            }
+        ]
+    });
+
+    window.addEventListener('resize', klineChart.resize);
+</script>
+
+
+<!-- 交易量展示 -->
+<script type="text/javascript">
+    var volumeChart = echarts.init(document.getElementById('volume'), 'dark', {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    var option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        legend: {
+            data: ['交易量', '近5天平均交易量', '换手率'],
+            selected : {
+                '换手率' : false
+            }
+        },
+        <!-- X轴 -->
+        xAxis: [
+            {
+                type: 'category',
+                data: ${volumeDates},
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '近5天平均交易量',
+                min: 0,
+                max: ${volumeMax},
+                interval: ${volumeInterval},
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            },
+            {
+                type: 'value',
+                name: '换手率',
+                min: 0,
+                max: ${turnoverMax},
+                interval: ${turnoverInterval},
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            }
+        ],
+        series: [
+            {
+                name: '交易量',
+                type: 'bar',
+                tooltip: {
+                    valueFormatter: function (value) {
+                        return value;
+                    }
+                },
+                data: ${volumeBarData}
+            },
+            {
+                name: '近5天平均交易量',
+                type: 'line',
+                yAxisIndex: 0,
+                tooltip: {
+                    valueFormatter: function (value) {
+                        return value;
+                    }
+                },
+                smooth: true,
+                data: ${volumeAvgs}
+            },
+            {
+                name: '换手率',
+                type: 'line',
+                yAxisIndex: 1,
+                tooltip: {
+                    valueFormatter: function (value) {
+                        return value;
+                    }
+                },
+                smooth: true,
+                data: ${turnovers}
+            }
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        volumeChart.setOption(option);
+    }
+
+    window.addEventListener('resize', volumeChart.resize);
+</script>
+
+<!-- MACD展示 -->
+<script type="text/javascript">
+    function drawMACD() {
+        var macdChart = echarts.init(document.getElementById('macd'), 'dark', {
+            renderer: 'canvas',
+            useDirtyRect: false
+        });
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            legend: {
+                data: ['MACD', 'DIF', 'DEA']
+            },
+            <!-- X轴 -->
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ${macdDates},
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'DIF',
+                    min: ${macdMin},
+                    max: ${macdMax},
+                    // interval: 50,
+                    interval: ${macdInterval},
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: 'DEA',
+                    min: ${macdMin},
+                    max: ${macdMax},
+                    interval: ${macdInterval},
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: 'MACD',
+                    type: 'bar',
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    data: ${macdNodeDatas}
+                },
+                {
+                    name: 'DIF',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: ${difs}
+                },
+                {
+                    name: 'DEA',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: ${deas}
+                }
+            ]
+        };
+
+        if (option && typeof option === 'object') {
+            macdChart.setOption(option);
+        }
+
+        window.addEventListener('resize', macdChart.resize);
+    }
+</script>
+
+<!-- KDJ展示 -->
+<script type="text/javascript">
+    function drawKDJ() {
+        var kdjChart = echarts.init(document.getElementById('kdj'), 'dark', {
+            renderer: 'canvas',
+            useDirtyRect: false
+        });
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            legend: {
+                data: ['RSV', 'K', 'D', 'J']
+            },
+            <!-- X轴 -->
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ${kdjDates},
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'K',
+                    min: ${kdjMin},
+                    max: ${kdjMax},
+                    interval: ${kdjInterval},
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: 'D',
+                    min: ${kdjMin},
+                    max: ${kdjMax},
+                    interval: ${kdjInterval},
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: 'J',
+                    min: ${kdjMin},
+                    max: ${kdjMax},
+                    interval: ${kdjInterval},
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: 'RSV',
+                    type: 'bar',
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    data: ${rsvNodeDatas}
+                },
+                {
+                    name: 'K',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: ${ks}
+                },
+                {
+                    name: 'D',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: ${ds}
+                },
+                {
+                    name: 'J',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: ${js}
+                }
+            ]
+        };
+
+        if (option && typeof option === 'object') {
+            kdjChart.setOption(option);
+        }
+
+        window.addEventListener('resize', kdjChart.resize);
+    }
+</script>
+</body>
+</html>

@@ -37,6 +37,7 @@ public class DashboradApplication {
 //        log.info("完成");
 
         new LongPictureScreenshot().exec("file:///D:/IdeaProjects/eagle-eye/report/301158.html", fileHomePath + "qq_" + new Date().getTime() + ".png");
+//        new LongPictureScreenshot().exec("file:///D:/IdeaProjects/eagle-eye/report/000006.html", fileHomePath + "qq_" + new Date().getTime() + ".png");
     }
 
 }
