@@ -17,7 +17,7 @@ public class DashboradApplication {
     public static void main(String[] args) {
         String fileHomePath = "./";
         if(new OsInfo().isWindows()){
-            System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\101.0.4951\\chromedriver.exe");
+            System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\102.0.5005.61\\chromedriver.exe");
         } else {
             System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
             fileHomePath = "/opt/selenium/temp/";

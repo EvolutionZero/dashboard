@@ -30,6 +30,9 @@ public class Reporter {
             log.error("", e);
         }
         return filePath;
+//        String reportPath = baseDir + fileName + ".png";
+//        new LongPictureScreenshot().exec(filePath, reportPath);
+//        return reportPath;
     }
 
     public String toHtml(Map<String, Object> params) {
