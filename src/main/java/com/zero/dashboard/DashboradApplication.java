@@ -20,7 +20,7 @@ public class DashboradApplication {
             System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\102.0.5005.61\\chromedriver.exe");
         } else {
             System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
-//            fileHomePath = "/opt/selenium/temp/";
+            fileHomePath = "/opt/selenium/opt/dashboard/temp/";
         }
         SpringApplication.run(DashboradApplication.class, args);
 
@@ -31,11 +31,11 @@ public class DashboradApplication {
 //        } catch (Exception e) {
 //            log.error("", e);
 //        }
-//        log.info("QQ截图");
-//        new LongPictureScreenshot().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".png");
-//        log.info("转PDF");
-//        new Web2Pdf().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".pdf");
-//        log.info("完成");
+        log.info("QQ截图");
+        new LongPictureScreenshot().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".png");
+        log.info("转PDF");
+        new Web2Pdf().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".pdf");
+        log.info("完成");
 
 //        new LongPictureScreenshot().exec("file:///D:/IdeaProjects/eagle-eye/report/301158.html", fileHomePath + "qq_" + new Date().getTime() + ".png");
 //        new LongPictureScreenshot().exec("file:///D:/IdeaProjects/eagle-eye/report/000006.html", fileHomePath + "qq_" + new Date().getTime() + ".png");
