@@ -18,8 +18,8 @@
         drawKDJ();
     }
 </script>
-<script type="text/javascript" src="./jquery"></script>
-<script type="text/javascript" src="./echarts.zero.js"></script>
+<script type="text/javascript" src="${scriptHomePath}/jquery"></script>
+<script type="text/javascript" src="${scriptHomePath}/echarts.zero.js"></script>
 <!-- K线展示 -->
 <script type="text/javascript">
     var klineChart = echarts.init(document.getElementById('kline'), 'dark', {
@@ -29,7 +29,6 @@
 
     const upColor = '#ec0000';
     const downColor = '#00da3c';
-    const a = '#D2DBEE';
 
     function powerEData(data) {
         var result = [];

@@ -20,22 +20,25 @@ public class Reporter {
 
     public String export(Map<String, Object> params, String fileName) {
         String html = toHtml(params);
-        String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/dashboard/" : "./";
-        String baseDir = fileHomePath + "report/";
-        String filePath = baseDir + fileName + (fileName.endsWith(".html") ? "" : ".html");
+        String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/opt/dashboard/report/" : "./";
+        String filePath = fileHomePath + "html/" + fileName + (fileName.endsWith(".html") ? "" : ".html");
         try {
-            FileUtils.forceMkdir(new File(baseDir));
+            FileUtils.forceMkdir(new File(fileHomePath));
             FileUtils.writeStringToFile(new File(filePath), html, "UTF-8");
         } catch (IOException e) {
             log.error("", e);
         }
-        return filePath;
-//        String reportPath = baseDir + fileName + ".png";
-//        new LongPictureScreenshot().exec(filePath, reportPath);
-//        return reportPath;
+        String reportPath = fileHomePath + "png/" + fileName + ".png";
+        new LongPictureScreenshot().exec(filePath, reportPath);
+        return reportPath;
     }
 
     public String toHtml(Map<String, Object> params) {
+        if(new OsInfo().isWindows()){
+            params.put("scriptHomePath", "D:/IdeaProjects/dashboard/src/main/resources/velocity");
+        } else {
+            params.put("scriptHomePath", "/opt/selenium/opt/dashboard/script");
+        }
         Properties properties = new Properties();
         properties.setProperty("resource.loader.file.class",
                 "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");

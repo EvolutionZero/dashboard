@@ -20,7 +20,7 @@ public class DashboradApplication {
             System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\102.0.5005.61\\chromedriver.exe");
         } else {
             System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
-            fileHomePath = "/opt/selenium/temp/";
+//            fileHomePath = "/opt/selenium/temp/";
         }
         SpringApplication.run(DashboradApplication.class, args);
 
