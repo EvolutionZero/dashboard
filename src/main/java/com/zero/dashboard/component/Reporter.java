@@ -29,7 +29,7 @@ public class Reporter {
             log.error("", e);
         }
         String reportPath = fileHomePath + "png/" + fileName + ".png";
-        new LongPictureScreenshot().exec("file://" + filePath, reportPath);
+        new TradeScreenshot().exec("file://" + filePath, reportPath);
         return reportPath;
     }
 
