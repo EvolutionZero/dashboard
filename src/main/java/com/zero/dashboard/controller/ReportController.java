@@ -1,6 +1,7 @@
 package com.zero.dashboard.controller;
 
 import com.zero.dashboard.dto.request.ScreenshotRequest;
+import com.zero.dashboard.dto.response.ScreenshotResponse;
 import com.zero.dashboard.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,7 +21,7 @@ public class ReportController {
 
     @PostMapping(value = "/screenshot", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public void screenshot(@RequestBody ScreenshotRequest request){
-        reportService.screenshot(request);
+    public ScreenshotResponse screenshot(@RequestBody ScreenshotRequest request){
+        return reportService.screenshot(request);
     }
 }

@@ -33,7 +33,6 @@ public class Trade2Pdf {
 //        options.addArguments("--headless");
         ChromeDriver chromeDriver = new ChromeDriver(options);
         chromeDriver.get(url);
-        Map<String, Object> params = new HashMap();
         chromeDriver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         chromeDriver.manage().window().maximize();
         Actions actions = new Actions(chromeDriver);
@@ -45,6 +44,9 @@ public class Trade2Pdf {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
         String command = "Page.printToPDF";
+        Map<String, Object> params = new HashMap();
+        params.put("width", "1920px");
+        params.put("height", "1080px");
         Map<String, Object> output = chromeDriver.executeCdpCommand(command, params);
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath);
