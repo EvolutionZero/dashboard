@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <title>301158_德石股份</title>
+</head>
+<body style="height: 100%; margin: 0">
+<div id="kline" style="height: 100%"></div>
+<div id="volume" style="height: 50%"></div>
+<div id="index" style="height: 50%; width: 100%">
+    <div id="macd" style="float:left;height: 100%;width: 50%; border:0px"></div>
+    <div id="kdj" style="float:right;height: 100%;width: 50%; border:0px"></div>
+</div>
+
+<script type="text/javascript">
+    window.onload=function(){
+        drawMACD();
+        drawKDJ();
+    }
+</script>
+<script type="text/javascript" src="./jquery"></script>
+<script type="text/javascript" src="./echarts.zero.js"></script>
+<!-- K线展示 -->
+<script type="text/javascript">
+    var klineChart = echarts.init(document.getElementById('kline'), 'dark', {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    const upColor = '#ec0000';
+    const downColor = '#00da3c';
+
+    function powerEData(data) {
+        var result = [];
+        for (var i = 0, len = data.length; i < len; i++) {
+            var pd = '-' == data[i] ? data[i] : Math.pow(Math.E, data[i]).toFixed(2)
+            result.push(pd);
+        }
+        return result;
+    }
+
+    function splitData(rawData) {
+        let categoryData = [];
+        let values = [];
+        let volumes = [];
+        for (let i = 0; i < rawData.length; i++) {
+            categoryData.push(rawData[i].splice(0, 1)[0]);
+            values.push(rawData[i]);
+            volumes.push([i, rawData[i][4], rawData[i][0] > rawData[i][1] ? 1 : -1]);
+        }
+        return {
+            categoryData: categoryData,
+            values: values,
+            volumes: volumes
+        };
+    }
+
+    function calculateMA(dayCount, data) {
+        var result = [];
+        for (var i = 0, len = data.values.length; i < len; i++) {
+            if (i < dayCount) {
+                result.push('-');
+                continue;
+            }
+            var sum = 0;
+            for (var j = 0; j < dayCount; j++) {
+                sum += data.values[i - j][1];
+            }
+            result.push(+(sum / dayCount).toFixed(3));
+        }
+        return result;
+    }
+    var rawData = "[[\"2022-01-17\",3.261935314328648,3.2805352052549286,3.25848107946056,3.3638415951183864,231449],[\"2022-01-18\",3.2108436531709366,3.58351893845611,3.202746442938317,3.6240742307478206,254715],[\"2022-01-19\",3.481240089335692,3.3551534431607486,3.342154841028372,3.517497837358316,212452],[\"2022-01-20\",3.295836866004329,3.279029747687948,3.2577118486533987,3.4001968813285717,171821],[\"2022-01-21\",3.22207071576472,3.130263166511597,3.122805356117467,3.251536607107749,145808],[\"2022-01-24\",3.1059310658520665,3.078693794268338,3.0694473113762717,3.126321843257593,99019],[\"2022-01-25\",3.068052935133617,3.093312601892855,3.0325462466767075,3.1095072878128356,102756],[\"2022-01-26\",3.0828269804049246,3.0530573401732606,3.044522437723423,3.099190981922221,77265],[\"2022-01-27\",3.0487989944906833,2.9381031607173544,2.9381031607173544,3.0530573401732606,93310],[\"2022-01-28\",2.9678470700644555,3.12060125559986,2.9590682891823996,3.12060125559986,165356],[\"2022-02-07\",3.258096538021482,3.3028492586443794,3.258096538021482,3.3028492586443794,104266],[\"2022-02-08\",3.295836866004329,3.2128577525426376,3.209229447816395,3.295836866004329,206700],[\"2022-02-09\",3.1780538303479458,3.2339614622862416,3.165896900077314,3.2414197893030954,162369],[\"2022-02-10\",3.1949928844048685,3.256942025674657,3.1441522786722644,3.2573270112424537,153826],[\"2022-02-11\",3.2846635654062037,3.2950958507796098,3.2771447329921766,3.4011973816621555,215705],[\"2022-02-14\",3.269949095052201,3.259249719006474,3.254242968705492,3.3631493140246254,151233],[\"2022-02-15\",3.2276373305367736,3.315276319154516,3.1998968582703977,3.323956301318708,138926],[\"2022-02-16\",3.2653776585196206,3.34814816057234,3.242592351485517,3.3631493140246254,158803],[\"2022-02-17\",3.3207101307494686,3.349904087274605,3.3013770463799443,3.4011973816621555,163827],[\"2022-02-18\",3.258096538021482,3.2507620137305224,3.241028629509334,3.2902658209548736,122990],[\"2022-02-21\",3.250374491927572,3.2433732964685884,3.2140642678709788,3.2607852279454104,90289],[\"2022-02-22\",3.2846635654062037,3.3105430133940246,3.2623183827110376,3.349904087274605,146471],[\"2022-02-23\",3.2492110246642736,3.258096538021482,3.2339614622862416,3.2767673032839784,104389],[\"2022-02-24\",3.2786530289040616,3.3375473545856993,3.269949095052201,3.4404180948154366,207069],[\"2022-02-25\",3.279029747687948,3.326114575537799,3.261168737058452,3.391147045808654,167606],[\"2022-02-28\",3.3474449256629084,3.3271919683516598,3.3214324131932926,3.4011973816621555,140120],[\"2022-03-01\",3.2902658209548736,3.3586377672433594,3.2771447329921766,3.3586377672433594,118150],[\"2022-03-02\",3.486763269991802,3.5409593240373143,3.3867603338643857,3.5409593240373143,229887],[\"2022-03-03\",3.6117283949255214,3.7232808808312687,3.607669398688393,3.7232808808312687,142687],[\"2022-03-04\",3.72400525608931,3.6686767467964168,3.6643305811925235,3.8366526984033693,274552],[\"2022-03-07\",3.7125959807312525,3.6354786773868213,3.6197972929264925,3.7125959807312525,162806],[\"2022-03-08\",3.5567756134805992,3.6117283949255214,3.481240089335692,3.6264719939853194,177625],[\"2022-03-09\",3.5776685247779345,3.536602018668358,3.4965075614664802,3.5796224681769866,131457],[\"2022-03-10\",3.4679210137050633,3.5325179989895132,3.4679210137050633,3.5627491769697244,139667],[\"2022-03-11\",3.5100517865742376,3.4995332823830174,3.4597807057610526,3.52311998561896,114278],[\"2022-03-14\",3.4506222649896783,3.410487428569248,3.3978584803966405,3.477540948249489,110191],[\"2022-03-15\",3.367295829986474,3.326473835466219,3.3141860046725258,3.3978584803966405,94341],[\"2022-03-16\",3.340030946424668,3.3361253849184407,3.280911215787653,3.349904087274605,79812],[\"2022-03-17\",3.3207101307494686,3.3823542938606757,3.3167282250357055,3.387098457282654,115346],[\"2022-03-18\",3.4164143474670157,3.3978584803966405,3.37314078387963,3.44265917146975,133772],[\"2022-03-21\",3.3697067145707846,3.395514598526657,3.3697067145707846,3.410157123033627,99893],[\"2022-03-22\",3.4239368686316447,3.434954478460289,3.407179453339703,3.4550540544528663,132670],[\"2022-03-23\",3.3700506526653187,3.332918540908861,3.322514859627687,3.3908102887756684,113656],[\"2022-03-24\",3.3624565533457247,3.305053521109253,3.2969473602883563,3.3748534063225533,90583],[\"2022-03-25\",3.2782761681496484,3.295836866004329,3.2733640101522705,3.3141860046725258,77851],[\"2022-03-28\",3.258096538021482,3.2684276036974484,3.2168738221975275,3.2748780149834853,64091],[\"2022-03-29\",3.258096538021482,3.223664341599998,3.2140642678709788,3.265759410767051,51528],[\"2022-03-30\",3.2108436531709366,3.231989464013584,3.2108436531709366,3.234355395716587,38609],[\"2022-03-31\",3.2268439945173775,3.201933104137889,3.1921210875593813,3.2268439945173775,45854],[\"2022-04-01\",3.2007118542405295,3.1871787381249463,3.175968323856924,3.2120525995200753,33039],[\"2022-04-06\",3.1945831322991562,3.211649779776461,3.1888289035159043,3.2244602031621015,42031],[\"2022-04-07\",3.190064743014081,3.1625170911988163,3.1570004211501135,3.1978564576441255,38910],[\"2022-04-08\",3.1625170911988163,3.14372115126744,3.1232455938529506,3.173459961337718,31077],[\"2022-04-11\",3.1406980438041767,3.099190981922221,3.084200921541599,3.1570004211501135,33901],[\"2022-04-12\",3.100092288878234,3.12060125559986,3.0777729838902004,3.122805356117467,26640],[\"2022-04-13\",3.133753571451366,3.134189016701007,3.130700133964475,3.190476350346503,71984],[\"2022-04-14\",3.128951117340214,3.1450139762697455,3.092405160814252,3.145444546782318,48898],[\"2022-04-15\",3.148882453047666,3.1540172525197043,3.1432898379116057,3.186352633162641,52047],[\"2022-04-18\",3.131136910560194,3.1780538303479458,3.121483478859551,3.1834558796369405,49667],[\"2022-04-19\",3.1780538303479458,3.229617921400103,3.170525563927154,3.261168737058452,99738],[\"2022-04-20\",3.190476350346503,3.1548704948922883,3.1518809560439225,3.2051824977361982,88037],[\"2022-04-21\",3.131136910560194,3.0699116717282426,3.0619880693310564,3.147594622863237,66412],[\"2022-04-22\",3.0525850851467737,3.171364842197149,3.0397491589707655,3.2188758248682006,102695],[\"2022-04-25\",3.14372115126744,3.0252910757955354,3.0243197304059035,3.1552968432253294,76824],[\"2022-04-26\",3.0106208860477417,2.9770590082883697,2.9601050959108397,3.0587070727153796,52729],[\"2022-04-27\",2.9465420293632194,3.0155349008501706,2.926382195419198,3.0155349008501706,50555],[\"2022-04-28\",2.990719731730447,2.926382195419198,2.9172300453990334,3.0027078872904163,48544],[\"2022-04-29\",2.9444389791664407,2.9811261211646287,2.9396908826703663,3.0007198150650303,45029],[\"2022-05-05\",2.996232148595642,3.0281994636914926,2.996232148595642,3.0416612054423906,40349],[\"2022-05-06\",3.0007198150650303,3.0591764461105257,2.9932291433358724,3.1018924693823817,56501],[\"2022-05-09\",3.0459499897146083,3.1095072878128356,3.044522437723423,3.1135153092103742,57406],[\"2022-05-10\",3.044998514856909,3.096482176654134,3.044998514856909,3.101442727976105,52919],[\"2022-05-11\",3.096482176654134,3.0860299115347716,3.0819099697950434,3.126760535960395,60420],[\"2022-05-12\",3.0855729775537806,3.095577608523707,3.068052935133617,3.1350593387750902,51129],[\"2022-05-13\",3.095577608523707,3.096482176654134,3.0828269804049246,3.1179499062782403,34478],[\"2022-05-16\",3.1161784266298582,3.094219220268645,3.082368580213538,3.122364924487357,33994],[\"2022-05-17\",3.1166215908294443,3.133753571451366,3.109953417644014,3.1780538303479458,76493],[\"2022-05-18\",3.1023420086122493,3.159125820462427,3.0601145324832593,3.169685580677429,76290],[\"2022-05-19\",3.126760535960395,3.1157350659486873,3.104586678466073,3.138099514840913,50140],[\"2022-05-20\",3.1188344706879745,3.092858984284714,3.09058780456667,3.1232455938529506,38134]]";
+    var klineData = splitData(JSON.parse(rawData));
+    klineChart.setOption(
+            (option = {
+                animation: false,
+                legend: {
+                    bottom: 10,
+                    left: 'center',
+                    data: ['德石股份', 'MA5', 'MA10', 'MA20', 'MA30']
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross'
+                    },
+                    borderWidth: 1,
+                    borderColor: '#ccc',
+                    padding: 10,
+                    textStyle: {
+                        color: '#000'
+                    },
+                    position: function (pos, params, el, elRect, size) {
+                        const obj = {
+                            top: 10
+                        };
+                        obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                        return obj;
+                    }
+                    // extraCssText: 'width: 170px'
+                },
+                axisPointer: {
+                    link: [
+                        {
+                            xAxisIndex: 'all'
+                        }
+                    ],
+                    label: {
+                        backgroundColor: '#777'
+                    }
+                },
+                toolbox: {
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: false
+                        },
+                        brush: {
+                            type: ['lineX', 'clear']
+                        }
+                    }
+                },
+                brush: {
+                    xAxisIndex: 'all',
+                    brushLink: 'all',
+                    outOfBrush: {
+                        colorAlpha: 0.1
+                    }
+                },
+                visualMap: {
+                    show: false,
+                    seriesIndex: 5,
+                    dimension: 2,
+                    pieces: [
+                        {
+                            value: 1,
+                            color: downColor
+                        },
+                        {
+                            value: -1,
+                            color: upColor
+                        }
+                    ]
+                },
+                grid: [
+                    {
+                        left: '10%',
+                        right: '8%',
+                        height: '50%'
+                    },
+                    {
+                        left: '10%',
+                        right: '8%',
+                        top: '63%',
+                        height: '16%'
+                    }
+                ],
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: klineData.categoryData,
+                        boundaryGap: false,
+                        axisLine: {onZero: false},
+                        splitLine: {show: false},
+                        min: 'dataMin',
+                        max: 'dataMax',
+                        axisPointer: {
+                            z: 100
+                        }
+                    },
+                    {
+                        type: 'category',
+                        gridIndex: 1,
+                        data: klineData.categoryData,
+                        boundaryGap: false,
+                        axisLine: {onZero: false},
+                        axisTick: {show: false},
+                        splitLine: {show: false},
+                        axisLabel: {show: false},
+                        min: 'dataMin',
+                        max: 'dataMax'
+                    }
+                ],
+                yAxis: [
+                    {
+                        scale: true,
+                        splitArea: {
+                            show: true
+                        }
+                    },
+                    {
+                        scale: true,
+                        gridIndex: 1,
+                        splitNumber: 2,
+                        axisLabel: {show: false},
+                        axisLine: {show: false},
+                        axisTick: {show: false},
+                        splitLine: {show: false}
+                    }
+                ],
+                dataZoom: [
+                    {
+                        type: 'inside',
+                        xAxisIndex: [0, 1],
+                        start: 0, //下面进度条起始
+                        end: 100 //下面进度条结束
+                    },
+                    {
+                        show: true,
+                        xAxisIndex: [0, 1],
+                        type: 'slider',
+                        top: '85%',
+                        start: 50,
+                        end: 100
+                    }
+                ],
+                series: [
+                    {
+                        name: '德石股份',
+                        type: 'candlestick',
+                        data: klineData.values,
+                        itemStyle: {
+                            color: upColor,
+                            color0: downColor,
+                            borderColor: undefined,
+                            borderColor0: undefined
+                        },
+                        <!-- tooltip无效 -->
+                        tooltip: {
+                            formatter: function (param) {
+                                param = param[0];
+                                return [
+
+                                    '日期: ' + param.name + '<hr size=1 style="margin: 3px 0">',
+                                    '开盘价: ' + param.data[0] + '<br/>',
+                                    '收盘价: ' + param.data[1] + '<br/>',
+                                    '最低价: ' + param.data[2] + '<br/>',
+                                    '最高价: ' + param.data[3] + '<br/>'
+                                ].join('');
+                            }
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return value instanceof Array ? '' : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA5',
+                        type: 'line',
+                        data: calculateMA(5, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA10',
+                        type: 'line',
+                        data: calculateMA(10, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA20',
+                        type: 'line',
+                        data: calculateMA(20, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: 'MA30',
+                        type: 'line',
+                        data: calculateMA(30, klineData),
+                        smooth: true,
+                        lineStyle: {
+                            opacity: 0.5
+                        },
+                        <!-- 爆改源代码可行 -->
+                        valueFormatter: function (value) {
+                            return '-' == value ? value : Math.pow(Math.E, value).toFixed(2);
+                        }
+                    },
+                    {
+                        name: '交易量',
+                        type: 'bar',
+                        xAxisIndex: 1,
+                        yAxisIndex: 1,
+                        data: klineData.volumes
+                    }
+                ]
+            }),
+            true
+    );
+    klineChart.dispatchAction({
+        type: 'brush',
+        areas: [
+            {
+                brushType: 'lineX',
+                coordRange: ['2022-05-09', '2022-05-20'], // 主面板聚焦
+                xAxisIndex: 0
+            }
+        ]
+    });
+
+    window.addEventListener('resize', klineChart.resize);
+</script>
+
+
+<!-- 交易量展示 -->
+<script type="text/javascript">
+    var volumeChart = echarts.init(document.getElementById('volume'), 'dark', {
+        renderer: 'canvas',
+        useDirtyRect: false
+    });
+
+    var option = {
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross',
+                crossStyle: {
+                    color: '#999'
+                }
+            }
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+            }
+        },
+        legend: {
+            data: ['交易量', '近5天平均交易量', '换手率'],
+            selected : {
+                '换手率' : false
+            }
+        },
+        <!-- X轴 -->
+        xAxis: [
+            {
+                type: 'category',
+                data: ['2022-01-17', '2022-01-18', '2022-01-19', '2022-01-20', '2022-01-21', '2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28', '2022-02-07', '2022-02-08', '2022-02-09', '2022-02-10', '2022-02-11', '2022-02-14', '2022-02-15', '2022-02-16', '2022-02-17', '2022-02-18', '2022-02-21', '2022-02-22', '2022-02-23', '2022-02-24', '2022-02-25', '2022-02-28', '2022-03-01', '2022-03-02', '2022-03-03', '2022-03-04', '2022-03-07', '2022-03-08', '2022-03-09', '2022-03-10', '2022-03-11', '2022-03-14', '2022-03-15', '2022-03-16', '2022-03-17', '2022-03-18', '2022-03-21', '2022-03-22', '2022-03-23', '2022-03-24', '2022-03-25', '2022-03-28', '2022-03-29', '2022-03-30', '2022-03-31', '2022-04-01', '2022-04-06', '2022-04-07', '2022-04-08', '2022-04-11', '2022-04-12', '2022-04-13', '2022-04-14', '2022-04-15', '2022-04-18', '2022-04-19', '2022-04-20', '2022-04-21', '2022-04-22', '2022-04-25', '2022-04-26', '2022-04-27', '2022-04-28', '2022-04-29', '2022-05-05', '2022-05-06', '2022-05-09', '2022-05-10', '2022-05-11', '2022-05-12', '2022-05-13', '2022-05-16', '2022-05-17', '2022-05-18', '2022-05-19', '2022-05-20'],
+                axisPointer: {
+                    type: 'shadow'
+                }
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '近5天平均交易量',
+                min: 0,
+                max: 302008.01,
+                interval: 30200.80,
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            },
+            {
+                type: 'value',
+                name: '换手率',
+                min: 0,
+                max: 84.71,
+                interval: 8.47,
+                axisLabel: {
+                    formatter: '{value}'
+                }
+            }
+        ],
+        series: [
+            {
+                name: '交易量',
+                type: 'bar',
+                tooltip: {
+                    valueFormatter: function (value) {
+                        return value;
+                    }
+                },
+                data: [{"value":231449.9,"itemStyle":{"color":"red"}},{"value":254715.49,"itemStyle":{"color":"red"}},{"value":212452.86,"itemStyle":{"color":"green"}},{"value":171821.21,"itemStyle":{"color":"green"}},{"value":145808.61,"itemStyle":{"color":"green"}},{"value":99019.15,"itemStyle":{"color":"green"}},{"value":102756.01,"itemStyle":{"color":"red"}},{"value":77265.4,"itemStyle":{"color":"green"}},{"value":93310.97,"itemStyle":{"color":"green"}},{"value":165356.12,"itemStyle":{"color":"red"}},{"value":104266.55,"itemStyle":{"color":"red"}},{"value":206700.06,"itemStyle":{"color":"green"}},{"value":162369.94,"itemStyle":{"color":"red"}},{"value":153826.95,"itemStyle":{"color":"red"}},{"value":215705.71,"itemStyle":{"color":"red"}},{"value":151233.99,"itemStyle":{"color":"green"}},{"value":138926.15,"itemStyle":{"color":"red"}},{"value":158803.13,"itemStyle":{"color":"red"}},{"value":163827.33,"itemStyle":{"color":"red"}},{"value":122990.95,"itemStyle":{"color":"green"}},{"value":90289.79,"itemStyle":{"color":"green"}},{"value":146471.9,"itemStyle":{"color":"red"}},{"value":104389.42,"itemStyle":{"color":"red"}},{"value":207069.84,"itemStyle":{"color":"red"}},{"value":167606.46,"itemStyle":{"color":"red"}},{"value":140120.38,"itemStyle":{"color":"green"}},{"value":118150.41,"itemStyle":{"color":"red"}},{"value":229887.08,"itemStyle":{"color":"red"}},{"value":142687.65,"itemStyle":{"color":"red"}},{"value":274552.74,"itemStyle":{"color":"green"}},{"value":162806.83,"itemStyle":{"color":"green"}},{"value":177625.46,"itemStyle":{"color":"red"}},{"value":131457.79,"itemStyle":{"color":"green"}},{"value":139667.71,"itemStyle":{"color":"red"}},{"value":114278.02,"itemStyle":{"color":"green"}},{"value":110191.4,"itemStyle":{"color":"green"}},{"value":94341.91,"itemStyle":{"color":"green"}},{"value":79812.88,"itemStyle":{"color":"green"}},{"value":115346.7,"itemStyle":{"color":"red"}},{"value":133772.27,"itemStyle":{"color":"green"}},{"value":99893.83,"itemStyle":{"color":"red"}},{"value":132670.91,"itemStyle":{"color":"red"}},{"value":113656.84,"itemStyle":{"color":"green"}},{"value":90583.96,"itemStyle":{"color":"green"}},{"value":77851.94,"itemStyle":{"color":"red"}},{"value":64091.0,"itemStyle":{"color":"red"}},{"value":51528.85,"itemStyle":{"color":"green"}},{"value":38609.16,"itemStyle":{"color":"red"}},{"value":45854.43,"itemStyle":{"color":"green"}},{"value":33039.2,"itemStyle":{"color":"green"}},{"value":42031.45,"itemStyle":{"color":"red"}},{"value":38910.55,"itemStyle":{"color":"green"}},{"value":31077.16,"itemStyle":{"color":"green"}},{"value":33901.84,"itemStyle":{"color":"green"}},{"value":26640.7,"itemStyle":{"color":"red"}},{"value":71984.46,"itemStyle":{"color":"red"}},{"value":48898.62,"itemStyle":{"color":"red"}},{"value":52047.46,"itemStyle":{"color":"red"}},{"value":49667.58,"itemStyle":{"color":"red"}},{"value":99738.94,"itemStyle":{"color":"red"}},{"value":88037.95,"itemStyle":{"color":"green"}},{"value":66412.09,"itemStyle":{"color":"green"}},{"value":102695.95,"itemStyle":{"color":"red"}},{"value":76824.19,"itemStyle":{"color":"green"}},{"value":52729.87,"itemStyle":{"color":"green"}},{"value":50555.98,"itemStyle":{"color":"red"}},{"value":48544.13,"itemStyle":{"color":"green"}},{"value":45029.31,"itemStyle":{"color":"red"}},{"value":40349.56,"itemStyle":{"color":"red"}},{"value":56501.57,"itemStyle":{"color":"red"}},{"value":57406.37,"itemStyle":{"color":"red"}},{"value":52919.03,"itemStyle":{"color":"red"}},{"value":60420.04,"itemStyle":{"color":"green"}},{"value":51129.81,"itemStyle":{"color":"red"}},{"value":34478.32,"itemStyle":{"color":"red"}},{"value":33994.64,"itemStyle":{"color":"green"}},{"value":76493.87,"itemStyle":{"color":"red"}},{"value":76290.88,"itemStyle":{"color":"red"}},{"value":50140.34,"itemStyle":{"color":"green"}},{"value":38134.87,"itemStyle":{"color":"green"}}]
+            },
+            {
+                name: '近5天平均交易量',
+                type: 'line',
+                yAxisIndex: 0,
+                tooltip: {
+                    valueFormatter: function (value) {
+                        return value;
+                    }
+                },
+                smooth: true,
+                data: [231449.90, 231449.90, 243082.70, 232872.75, 217609.87, 203249.61, 176763.46, 146371.57, 119334.08, 103632.03, 107541.53, 108591.01, 129379.82, 146400.73, 158503.92, 168573.84, 177967.33, 164412.55, 163699.19, 165699.26, 147156.31, 134967.47, 136476.62, 125593.88, 134242.38, 143165.48, 153131.60, 147467.30, 172566.83, 159690.40, 181079.65, 185616.94, 197511.95, 177826.09, 177222.11, 145167.16, 134644.08, 117987.37, 107658.38, 102794.18, 106693.03, 104633.52, 112299.32, 119068.11, 114115.56, 102931.50, 95770.93, 79542.52, 64532.98, 55587.08, 46624.53, 42212.62, 39688.96, 38182.56, 35792.04, 34512.34, 71984.46, 60441.54, 57643.51, 55649.53, 64467.41, 67678.11, 71180.80, 81310.50, 86741.82, 52729.87, 50555.98, 49550.06, 48043.14, 46119.75, 48196.11, 49566.19, 50441.17, 53519.31, 55675.36, 51270.71, 46588.37, 51303.34, 54477.50, 54279.61]
+            },
+            {
+                name: '换手率',
+                type: 'line',
+                yAxisIndex: 1,
+                tooltip: {
+                    valueFormatter: function (value) {
+                        return value;
+                    }
+                },
+                smooth: true,
+                data: [64.92, 71.44, 59.59, 48.19, 40.90, 27.77, 28.82, 21.67, 26.17, 46.38, 29.24, 57.97, 45.54, 43.14, 60.50, 42.42, 38.97, 44.54, 45.95, 34.50, 25.32, 41.08, 29.28, 58.08, 47.01, 39.30, 33.14, 64.48, 40.02, 77.01, 45.66, 49.82, 36.87, 39.17, 32.05, 30.91, 26.46, 22.39, 32.35, 37.52, 28.02, 37.21, 31.88, 25.41, 21.84, 17.98, 14.45, 10.83, 12.86, 9.27, 11.79, 10.91, 8.72, 9.51, 7.47, 20.19, 13.71, 14.60, 13.93, 27.97, 24.69, 18.63, 28.80, 21.55, 14.79, 14.18, 13.62, 12.63, 11.32, 15.85, 16.10, 14.84, 16.95, 14.34, 9.67, 9.53, 21.45, 21.40, 14.06, 10.70]
+            }
+        ]
+    };
+
+    if (option && typeof option === 'object') {
+        volumeChart.setOption(option);
+    }
+
+    window.addEventListener('resize', volumeChart.resize);
+</script>
+
+<!-- MACD展示 -->
+<script type="text/javascript">
+    function drawMACD() {
+        var macdChart = echarts.init(document.getElementById('macd'), 'dark', {
+            renderer: 'canvas',
+            useDirtyRect: false
+        });
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            legend: {
+                data: ['MACD', 'DIF', 'DEA']
+            },
+            <!-- X轴 -->
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ['2022-01-17', '2022-01-18', '2022-01-19', '2022-01-20', '2022-01-21', '2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28', '2022-02-07', '2022-02-08', '2022-02-09', '2022-02-10', '2022-02-11', '2022-02-14', '2022-02-15', '2022-02-16', '2022-02-17', '2022-02-18', '2022-02-21', '2022-02-22', '2022-02-23', '2022-02-24', '2022-02-25', '2022-02-28', '2022-03-01', '2022-03-02', '2022-03-03', '2022-03-04', '2022-03-07', '2022-03-08', '2022-03-09', '2022-03-10', '2022-03-11', '2022-03-14', '2022-03-15', '2022-03-16', '2022-03-17', '2022-03-18', '2022-03-21', '2022-03-22', '2022-03-23', '2022-03-24', '2022-03-25', '2022-03-28', '2022-03-29', '2022-03-30', '2022-03-31', '2022-04-01', '2022-04-06', '2022-04-07', '2022-04-08', '2022-04-11', '2022-04-12', '2022-04-13', '2022-04-14', '2022-04-15', '2022-04-18', '2022-04-19', '2022-04-20', '2022-04-21', '2022-04-22', '2022-04-25', '2022-04-26', '2022-04-27', '2022-04-28', '2022-04-29', '2022-05-05', '2022-05-06', '2022-05-09', '2022-05-10', '2022-05-11', '2022-05-12', '2022-05-13', '2022-05-16', '2022-05-17', '2022-05-18', '2022-05-19', '2022-05-20'],
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'DIF',
+                    min: -2.17,
+                    max: 3.37,
+                    // interval: 50,
+                    interval: 0.55,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: 'DEA',
+                    min: -2.17,
+                    max: 3.37,
+                    interval: 0.55,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: 'MACD',
+                    type: 'bar',
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    data: [{"value":0.00,"itemStyle":{"color":"green"}},{"value":1.20,"itemStyle":{"color":"red"}},{"value":0.95,"itemStyle":{"color":"red"}},{"value":0.47,"itemStyle":{"color":"red"}},{"value":-0.33,"itemStyle":{"color":"green"}},{"value":-0.97,"itemStyle":{"color":"green"}},{"value":-1.28,"itemStyle":{"color":"green"}},{"value":-1.52,"itemStyle":{"color":"green"}},{"value":-1.88,"itemStyle":{"color":"green"}},{"value":-1.52,"itemStyle":{"color":"green"}},{"value":-0.62,"itemStyle":{"color":"green"}},{"value":-0.31,"itemStyle":{"color":"green"}},{"value":-0.02,"itemStyle":{"color":"green"}},{"value":0.25,"itemStyle":{"color":"red"}},{"value":0.55,"itemStyle":{"color":"red"}},{"value":0.60,"itemStyle":{"color":"red"}},{"value":0.80,"itemStyle":{"color":"red"}},{"value":1.01,"itemStyle":{"color":"red"}},{"value":1.10,"itemStyle":{"color":"red"}},{"value":0.76,"itemStyle":{"color":"red"}},{"value":0.48,"itemStyle":{"color":"red"}},{"value":0.51,"itemStyle":{"color":"red"}},{"value":0.32,"itemStyle":{"color":"red"}},{"value":0.46,"itemStyle":{"color":"red"}},{"value":0.48,"itemStyle":{"color":"red"}},{"value":0.47,"itemStyle":{"color":"red"}},{"value":0.54,"itemStyle":{"color":"red"}},{"value":1.29,"itemStyle":{"color":"red"}},{"value":2.56,"itemStyle":{"color":"red"}},{"value":2.93,"itemStyle":{"color":"red"}},{"value":2.83,"itemStyle":{"color":"red"}},{"value":2.47,"itemStyle":{"color":"red"}},{"value":1.74,"itemStyle":{"color":"red"}},{"value":1.14,"itemStyle":{"color":"red"}},{"value":0.52,"itemStyle":{"color":"red"}},{"value":-0.30,"itemStyle":{"color":"green"}},{"value":-1.15,"itemStyle":{"color":"green"}},{"value":-1.62,"itemStyle":{"color":"green"}},{"value":-1.70,"itemStyle":{"color":"green"}},{"value":-1.63,"itemStyle":{"color":"green"}},{"value":-1.54,"itemStyle":{"color":"green"}},{"value":-1.27,"itemStyle":{"color":"green"}},{"value":-1.44,"itemStyle":{"color":"green"}},{"value":-1.59,"itemStyle":{"color":"green"}},{"value":-1.64,"itemStyle":{"color":"green"}},{"value":-1.69,"itemStyle":{"color":"green"}},{"value":-1.78,"itemStyle":{"color":"green"}},{"value":-1.72,"itemStyle":{"color":"green"}},{"value":-1.69,"itemStyle":{"color":"green"}},{"value":-1.62,"itemStyle":{"color":"green"}},{"value":-1.40,"itemStyle":{"color":"green"}},{"value":-1.33,"itemStyle":{"color":"green"}},{"value":-1.26,"itemStyle":{"color":"green"}},{"value":-1.26,"itemStyle":{"color":"green"}},{"value":-1.11,"itemStyle":{"color":"green"}},{"value":-0.89,"itemStyle":{"color":"green"}},{"value":-0.65,"itemStyle":{"color":"green"}},{"value":-0.41,"itemStyle":{"color":"green"}},{"value":-0.14,"itemStyle":{"color":"green"}},{"value":0.23,"itemStyle":{"color":"red"}},{"value":0.25,"itemStyle":{"color":"red"}},{"value":0.03,"itemStyle":{"color":"red"}},{"value":0.21,"itemStyle":{"color":"red"}},{"value":-0.07,"itemStyle":{"color":"green"}},{"value":-0.34,"itemStyle":{"color":"green"}},{"value":-0.36,"itemStyle":{"color":"green"}},{"value":-0.55,"itemStyle":{"color":"green"}},{"value":-0.48,"itemStyle":{"color":"green"}},{"value":-0.25,"itemStyle":{"color":"green"}},{"value":0.02,"itemStyle":{"color":"red"}},{"value":0.36,"itemStyle":{"color":"red"}},{"value":0.54,"itemStyle":{"color":"red"}},{"value":0.63,"itemStyle":{"color":"red"}},{"value":0.71,"itemStyle":{"color":"red"}},{"value":0.75,"itemStyle":{"color":"red"}},{"value":0.76,"itemStyle":{"color":"red"}},{"value":0.86,"itemStyle":{"color":"red"}},{"value":0.97,"itemStyle":{"color":"red"}},{"value":0.89,"itemStyle":{"color":"red"}},{"value":0.74,"itemStyle":{"color":"red"}}]
+                },
+                {
+                    name: 'DIF',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: [0.00, 0.75, 0.74, 0.56, 0.12, -0.32, -0.63, -0.94, -1.36, -1.37, -0.99, -0.88, -0.74, -0.57, -0.35, -0.25, -0.05, 0.18, 0.36, 0.29, 0.21, 0.29, 0.23, 0.36, 0.43, 0.48, 0.59, 1.12, 2.08, 2.63, 2.93, 3.06, 2.92, 2.76, 2.51, 2.07, 1.50, 1.06, 0.81, 0.64, 0.49, 0.47, 0.21, -0.07, -0.30, -0.53, -0.80, -0.99, -1.18, -1.35, -1.42, -1.55, -1.67, -1.83, -1.89, -1.89, -1.86, -1.79, -1.67, -1.45, -1.41, -1.52, -1.40, -1.55, -1.73, -1.79, -1.95, -1.97, -1.89, -1.76, -1.54, -1.38, -1.26, -1.13, -1.01, -0.91, -0.76, -0.58, -0.51, -0.49]
+                },
+                {
+                    name: 'DEA',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: [0.00, 0.15, 0.27, 0.33, 0.29, 0.17, 0.01, -0.18, -0.42, -0.61, -0.69, -0.72, -0.73, -0.70, -0.63, -0.55, -0.45, -0.33, -0.19, -0.09, -0.03, 0.03, 0.07, 0.13, 0.19, 0.25, 0.32, 0.48, 0.80, 1.17, 1.52, 1.83, 2.04, 2.19, 2.25, 2.21, 2.07, 1.87, 1.66, 1.45, 1.26, 1.10, 0.92, 0.73, 0.52, 0.31, 0.09, -0.13, -0.34, -0.54, -0.72, -0.88, -1.04, -1.20, -1.34, -1.45, -1.53, -1.58, -1.60, -1.57, -1.54, -1.54, -1.51, -1.52, -1.56, -1.61, -1.68, -1.74, -1.77, -1.77, -1.72, -1.65, -1.57, -1.48, -1.39, -1.29, -1.19, -1.06, -0.95, -0.86]
+                }
+            ]
+        };
+
+        if (option && typeof option === 'object') {
+            macdChart.setOption(option);
+        }
+
+        window.addEventListener('resize', macdChart.resize);
+    }
+</script>
+
+<!-- KDJ展示 -->
+<script type="text/javascript">
+    function drawKDJ() {
+        var kdjChart = echarts.init(document.getElementById('kdj'), 'dark', {
+            renderer: 'canvas',
+            useDirtyRect: false
+        });
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    crossStyle: {
+                        color: '#999'
+                    }
+                }
+            },
+            toolbox: {
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            legend: {
+                data: ['RSV', 'K', 'D', 'J']
+            },
+            <!-- X轴 -->
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ['2022-01-17', '2022-01-18', '2022-01-19', '2022-01-20', '2022-01-21', '2022-01-24', '2022-01-25', '2022-01-26', '2022-01-27', '2022-01-28', '2022-02-07', '2022-02-08', '2022-02-09', '2022-02-10', '2022-02-11', '2022-02-14', '2022-02-15', '2022-02-16', '2022-02-17', '2022-02-18', '2022-02-21', '2022-02-22', '2022-02-23', '2022-02-24', '2022-02-25', '2022-02-28', '2022-03-01', '2022-03-02', '2022-03-03', '2022-03-04', '2022-03-07', '2022-03-08', '2022-03-09', '2022-03-10', '2022-03-11', '2022-03-14', '2022-03-15', '2022-03-16', '2022-03-17', '2022-03-18', '2022-03-21', '2022-03-22', '2022-03-23', '2022-03-24', '2022-03-25', '2022-03-28', '2022-03-29', '2022-03-30', '2022-03-31', '2022-04-01', '2022-04-06', '2022-04-07', '2022-04-08', '2022-04-11', '2022-04-12', '2022-04-13', '2022-04-14', '2022-04-15', '2022-04-18', '2022-04-19', '2022-04-20', '2022-04-21', '2022-04-22', '2022-04-25', '2022-04-26', '2022-04-27', '2022-04-28', '2022-04-29', '2022-05-05', '2022-05-06', '2022-05-09', '2022-05-10', '2022-05-11', '2022-05-12', '2022-05-13', '2022-05-16', '2022-05-17', '2022-05-18', '2022-05-19', '2022-05-20'],
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: 'K',
+                    min: -10.81,
+                    max: 118.12,
+                    interval: 12.89,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: 'D',
+                    min: -10.81,
+                    max: 118.12,
+                    interval: 12.89,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: 'J',
+                    min: -10.81,
+                    max: 118.12,
+                    interval: 12.89,
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: 'RSV',
+                    type: 'bar',
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    data: [{"value":20.07,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":88.44,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":31.42,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":15.13,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":1.15,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":1.25,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":7.77,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":2.57,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":0.00,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":20.31,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":44.65,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":40.28,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":58.61,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":85.32,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":72.84,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":64.30,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":77.79,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":86.06,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":86.01,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":38.38,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":35.59,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":61.77,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":41.18,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":54.27,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":49.48,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":49.93,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":61.23,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":100.00,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":100.00,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":66.64,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":59.74,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":55.50,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":40.76,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":40.07,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":33.22,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":19.02,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":1.80,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":7.64,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":14.37,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":22.98,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":29.42,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":47.84,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":16.40,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":8.92,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":10.03,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":19.67,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":3.54,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":7.73,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":3.28,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":3.50,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":11.28,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":2.10,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":7.23,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":5.84,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":20.09,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":28.06,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":41.03,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":49.28,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":66.76,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":81.47,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":39.82,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":3.61,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":56.76,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":0.36,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":4.87,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":23.45,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":2.24,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":16.07,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":28.59,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":43.32,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":60.22,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":55.76,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":68.41,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":80.22,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":80.67,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":79.56,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":79.57,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":88.89,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":64.20,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}},{"value":34.67,"itemStyle":{"color":"rgba(255, 0, 0,0.1)"}}]
+                },
+                {
+                    name: 'K',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: [20.07, 42.86, 39.05, 31.07, 21.10, 14.48, 12.24, 9.02, 6.01, 10.78, 22.07, 28.14, 38.30, 53.97, 60.26, 61.61, 67.00, 73.35, 77.57, 64.51, 54.87, 57.17, 51.84, 52.65, 51.59, 51.04, 54.44, 69.62, 79.75, 75.38, 70.17, 65.28, 57.11, 51.43, 45.36, 36.58, 24.99, 19.20, 17.59, 19.39, 22.73, 31.10, 26.20, 20.44, 16.97, 17.87, 13.09, 11.30, 8.63, 6.92, 8.37, 6.28, 6.60, 6.35, 10.93, 16.64, 24.77, 32.94, 44.22, 56.63, 51.03, 35.22, 42.40, 28.39, 20.55, 21.52, 15.09, 15.42, 19.81, 27.65, 38.50, 44.25, 52.30, 61.61, 67.96, 71.83, 74.41, 79.23, 74.22, 61.04]
+                },
+                {
+                    name: 'D',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: [20.07, 27.67, 31.46, 31.33, 27.92, 23.44, 19.71, 16.15, 12.77, 12.11, 15.43, 19.67, 25.88, 35.24, 43.58, 49.59, 55.39, 61.38, 66.78, 66.02, 62.30, 60.59, 57.67, 56.00, 54.53, 53.36, 53.72, 59.02, 65.93, 69.08, 69.44, 68.05, 64.40, 60.08, 55.17, 48.97, 40.98, 33.72, 28.34, 25.36, 24.48, 26.69, 26.53, 24.50, 21.99, 20.62, 18.11, 15.84, 13.44, 11.26, 10.30, 8.96, 8.17, 7.57, 8.69, 11.34, 15.81, 21.52, 29.09, 38.27, 42.52, 40.09, 40.86, 36.70, 31.32, 28.05, 23.73, 20.96, 20.58, 22.93, 28.12, 33.50, 39.77, 47.05, 54.02, 59.96, 64.77, 69.59, 71.14, 67.77]
+                },
+                {
+                    name: 'J',
+                    type: 'line',
+                    yAxisIndex: 1,
+                    tooltip: {
+                        valueFormatter: function (value) {
+                            return value;
+                        }
+                    },
+                    smooth: true,
+                    data: [20.07, 73.25, 54.22, 30.56, 7.46, -3.43, -2.68, -5.23, -7.50, 8.13, 35.36, 45.09, 63.14, 91.43, 93.62, 85.64, 90.22, 97.30, 99.16, 61.48, 40.00, 50.32, 40.16, 45.95, 45.71, 46.38, 55.86, 90.83, 107.38, 87.97, 71.61, 59.73, 42.51, 34.12, 25.73, 11.79, -7.00, -9.83, -3.91, 7.45, 19.23, 39.92, 25.55, 12.32, 6.93, 12.38, 3.07, 2.23, -0.99, -1.77, 4.52, 0.93, 3.45, 3.91, 15.41, 27.24, 42.68, 55.78, 74.47, 93.36, 68.04, 25.49, 45.48, 11.76, -0.99, 8.45, -2.19, 4.34, 18.27, 37.07, 59.26, 65.76, 77.37, 90.73, 95.85, 95.57, 93.68, 98.52, 80.39, 47.57]
+                }
+            ]
+        };
+
+        if (option && typeof option === 'object') {
+            kdjChart.setOption(option);
+        }
+
+        window.addEventListener('resize', kdjChart.resize);
+    }
+</script>
+</body>
+</html>
