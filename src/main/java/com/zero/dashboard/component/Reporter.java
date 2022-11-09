@@ -94,7 +94,7 @@ public class Reporter {
             minioClient.uploadObject(
                     UploadObjectArgs.builder()
                             .bucket(bucketName)
-                            .object(objectName)
+                            .object("/233/" + objectName)
                             .filename(filePath) // 本地磁盘的路径
                             .build()
             );
