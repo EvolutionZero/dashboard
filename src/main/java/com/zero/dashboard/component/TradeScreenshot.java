@@ -54,7 +54,7 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("截图");
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(driver);
+        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(3)).takeScreenshot(driver);
         stopWatch.stop();
 
         stopWatch.start("保存图片");
