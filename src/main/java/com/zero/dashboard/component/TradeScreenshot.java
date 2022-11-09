@@ -71,6 +71,7 @@ public class TradeScreenshot {
         stopWatch.start("关闭浏览器");
         stopWatch.stop();
 
+        stopWatch.start("命令截图");
         String command = "Page.captureScreenshot";
         Map<String, Object> params = new HashMap();
         params.put("width", "1920px");
@@ -79,6 +80,8 @@ public class TradeScreenshot {
         Map<String, Object> output = driver.executeCdpCommand(command, params);
         log.info("命令截图: " + JSONUtil.toJsonStr(output));
         log.info("命令截图: " + JSONUtil.toJsonStr(output.keySet()));
+        stopWatch.stop();
+
         driver.close();
 
         log.info(stopWatch.prettyPrint());
