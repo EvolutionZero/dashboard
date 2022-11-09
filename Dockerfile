@@ -8,6 +8,7 @@ RUN mkdir /opt/selenium/opt/dashboard/report/html
 RUN mkdir /opt/selenium/opt/dashboard/report/pdf
 RUN mkdir /opt/selenium/opt/dashboard/report/png
 RUN mkdir /opt/selenium/opt/dashboard/script
+RUN chmod 777 /opt/selenium/opt/dashboard
 ADD ./target/classes/velocity/echarts.zero.js /opt/selenium/opt/dashboard/script/echarts.zero.js
 ADD ./target/classes/301158.html /opt/selenium/opt/dashboard/script/301158.html
 ADD ./target/classes/velocity/jquery /opt/selenium/opt/dashboard/script/jquery
