@@ -74,13 +74,22 @@ public class TradeScreenshot {
 
         stopWatch.start("命令截图");
         String command = "Page.captureScreenshot";
+        Object width = driver.executeScript("return document.body.scrollWidth");
+        Object height = driver.executeScript("return document.body.scrollHeight");
+
         Map<String, Object> params = new HashMap();
-        params.put("width", "1920px");
-        params.put("height", "1080px");
+        params.put("width", width);
+        params.put("height", height);
         params.put("fromSurface", true);
+        params.put("mobile", false);
+        params.put("deviceScaleFactor", 1);
+
+        driver.executeCdpCommand("Emulation.setDeviceMetricsOverride", params);
+
         Map<String, Object> output = driver.executeCdpCommand(command, params);
-        log.info("命令截图: " + JSONUtil.toJsonStr(output));
-        log.info("命令截图: " + JSONUtil.toJsonStr(output.keySet()));
+//        log.info("命令截图: " + JSONUtil.toJsonStr(output));
+//        log.info("命令截图: " + JSONUtil.toJsonStr(output.keySet()));
+        log.info("截图参数: " + JSONUtil.toJsonStr(params));
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(filePath);
             byte[] byteArray = java.util.Base64.getDecoder().decode((String) output.get("data"));
