@@ -1,0 +1,1 @@
+docker exec -it $(docker ps --filter "name=dashboard" -q -a) /bin/bash

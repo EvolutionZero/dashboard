@@ -1,0 +1,1 @@
+docker docker logs -f --tail=200 $(docker ps --filter "name=dashboard" -q -a)
