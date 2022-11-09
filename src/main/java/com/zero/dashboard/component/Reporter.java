@@ -19,6 +19,7 @@ import org.apache.velocity.app.VelocityEngine;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
@@ -83,14 +84,13 @@ public class Reporter {
                     .endpoint("http://192.168.3.140:9000/")
                     .credentials("admin","admin123")
                     .build();
-            String bucketName = "test";
+            String bucketName = "test/" + new Date().getTime();
             boolean found = minioClient.bucketExists(BucketExistsArgs.
                     builder().bucket(bucketName).build());
             if (!found){
                 // 新建一个桶
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             }
-
             minioClient.uploadObject(
                     UploadObjectArgs.builder()
                             .bucket(bucketName)
