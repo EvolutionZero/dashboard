@@ -1,6 +1,7 @@
 package com.zero.dashboard.component;
 
 
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.system.OsInfo;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
@@ -27,6 +28,7 @@ import java.util.Properties;
 public class Reporter {
 
     public ScreenshotResponse export(ScreenshotRequest request) {
+        StopWatch stopWatch = new StopWatch();
         Map<String, Object> params = request.getParams();
         String fileName = request.getFileName();
         if(new OsInfo().isWindows()){
@@ -34,7 +36,9 @@ public class Reporter {
         } else {
             params.put("scriptHomePath", "/opt/selenium/opt/dashboard/script");
         }
+        stopWatch.start("生成html");
         String html = toHtml(params);
+
         String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/opt/dashboard/report/" : "./";
         String htmlPath = fileHomePath + "html/" + fileName + (fileName.endsWith(".html") ? "" : ".html");
         try {
@@ -43,16 +47,25 @@ public class Reporter {
         } catch (IOException e) {
             log.error("", e);
         }
+        stopWatch.stop();
+
         ScreenshotResponse response = new ScreenshotResponse();
         if(request.getTypes().contains(ScreenshotTypeEnum.HTML.getValue())){
             response.setHtmlPath(htmlPath);
         }
+        stopWatch.start("生成图片");
         if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
             String pngPath = fileHomePath + "png/" + fileName + ".png";
             new TradeScreenshot().exec("file://" + htmlPath, pngPath);
             response.setPngPath(pngPath);
         }
+        stopWatch.stop();
+
+        stopWatch.start("上传图片");
         uploadToMinio(response.getPngPath(), fileName + ".png");
+        stopWatch.stop();
+
+        log.info(stopWatch.prettyPrint());
         //FIXME PDF截图有问题暂时不用
 //        new Trade2Pdf().exec("file://" + htmlPath, fileHomePath + "pdf/" + fileName + ".pdf");
         return response;
