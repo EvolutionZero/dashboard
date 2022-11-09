@@ -1,6 +1,7 @@
 package com.zero.dashboard.component;
 
 import cn.hutool.core.date.StopWatch;
+import cn.hutool.json.JSONUtil;
 import cn.hutool.system.OsInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -20,6 +21,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class TradeScreenshot {
@@ -32,7 +35,7 @@ public class TradeScreenshot {
             options.setBinary("/opt/google/chrome/chrome");
             options.addArguments("--headless", "--no-sandbox", "--window-size=1920,1080");
         }
-        WebDriver driver = new ChromeDriver(options);
+        ChromeDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
         stopWatch.stop();
@@ -66,8 +69,17 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("关闭浏览器");
-        driver.close();
         stopWatch.stop();
+
+        String command = "Page.captureScreenshot";
+        Map<String, Object> params = new HashMap();
+        params.put("width", "1920px");
+        params.put("height", "1080px");
+        params.put("fromSurface", true);
+        Map<String, Object> output = driver.executeCdpCommand(command, params);
+        log.info("命令截图: " + JSONUtil.toJsonStr(output));
+
+        driver.close();
 
         log.info(stopWatch.prettyPrint());
     }
