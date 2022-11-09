@@ -21,9 +21,7 @@ import java.time.Duration;
 
 public class TradeScreenshot {
 
-    private static final WebDriver DRIVER;
-
-    static {
+    public void exec(String url, String filePath){
         ChromeOptions options = new ChromeOptions();
         if(new OsInfo().isLinux()){
             options.setBinary("/opt/google/chrome/chrome");
@@ -32,36 +30,22 @@ public class TradeScreenshot {
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
-
-        DRIVER = driver;
-    }
-
-
-    public void exec(String url, String filePath){
-//        ChromeOptions options = new ChromeOptions();
-//        if(new OsInfo().isLinux()){
-//            options.setBinary("/opt/google/chrome/chrome");
-//            options.addArguments("--headless", "--no-sandbox", "--window-size=1920,1080");
-//        }
-//        WebDriver driver = new ChromeDriver(options);
-//        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-//        driver.manage().window().maximize();
-        DRIVER.get(url);
-        Actions actions = new Actions(DRIVER);
+        driver.get(url);
+        Actions actions = new Actions(driver);
         // 鼠标移动到一侧
         actions.moveByOffset(920, 0).perform();
-        WebDriverWait wait = new WebDriverWait(DRIVER,5);
+        WebDriverWait wait = new WebDriverWait(driver,5);
         wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(DRIVER);
+        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(driver);
         BufferedImage image = screenshot.getImage();
         try {
             ImageIO.write(image, "PNG", new File(filePath));
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        driver.close();
+        driver.close();
     }
 }
