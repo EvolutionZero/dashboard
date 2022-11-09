@@ -78,7 +78,7 @@ public class TradeScreenshot {
         params.put("fromSurface", true);
         Map<String, Object> output = driver.executeCdpCommand(command, params);
         log.info("命令截图: " + JSONUtil.toJsonStr(output));
-
+        log.info("命令截图: " + JSONUtil.toJsonStr(output.keySet()));
         driver.close();
 
         log.info(stopWatch.prettyPrint());
