@@ -84,7 +84,7 @@ public class Reporter {
                     .endpoint("http://192.168.3.140:9000/")
                     .credentials("admin","admin123")
                     .build();
-            String bucketName = "test/" + new Date().getTime();
+            String bucketName = "test";
             boolean found = minioClient.bucketExists(BucketExistsArgs.
                     builder().bucket(bucketName).build());
             if (!found){
