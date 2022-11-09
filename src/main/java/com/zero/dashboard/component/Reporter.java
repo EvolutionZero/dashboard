@@ -5,6 +5,10 @@ import cn.hutool.system.OsInfo;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
 import com.zero.dashboard.enums.ScreenshotTypeEnum;
+import io.minio.BucketExistsArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.UploadObjectArgs;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
@@ -47,6 +51,7 @@ public class Reporter {
             new TradeScreenshot().exec("file://" + htmlPath, pngPath);
             response.setPngPath(pngPath);
         }
+        uploadToMinio(response.getPngPath(), fileName + ".png");
         //FIXME PDF截图有问题暂时不用
 //        new Trade2Pdf().exec("file://" + htmlPath, fileHomePath + "pdf/" + fileName + ".pdf");
         return response;
@@ -69,5 +74,36 @@ public class Reporter {
 
         template.merge(context, stringWriter);
         return stringWriter.toString();
+    }
+
+
+    private void uploadToMinio(String filePath, String objectName){
+        try {
+            MinioClient minioClient = MinioClient.builder()
+                    .endpoint("http://192.168.3.140:9000/")
+                    .credentials("admin","admin123")
+                    .build();
+            String bucketName = "test";
+            boolean found = minioClient.bucketExists(BucketExistsArgs.
+                    builder().bucket(bucketName).build());
+            if (!found){
+                // 新建一个桶
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            }
+
+            minioClient.uploadObject(
+                    UploadObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .filename(filePath) // 本地磁盘的路径
+                            .build()
+            );
+            System.out.println("上传成功");
+
+        }catch (Exception e){
+            log.error("", e);
+        }
+
+
     }
 }
