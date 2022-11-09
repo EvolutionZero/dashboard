@@ -1,6 +1,8 @@
 package com.zero.dashboard.component;
 
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.system.OsInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -19,9 +21,12 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 
+@Slf4j
 public class TradeScreenshot {
 
     public void exec(String url, String filePath){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start("启动浏览器");
         ChromeOptions options = new ChromeOptions();
         if(new OsInfo().isLinux()){
             options.setBinary("/opt/google/chrome/chrome");
@@ -30,7 +35,13 @@ public class TradeScreenshot {
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
+        stopWatch.stop();
+
+        stopWatch.start("打开网页");
         driver.get(url);
+        stopWatch.stop();
+
+        stopWatch.start("等待加载完成");
         Actions actions = new Actions(driver);
         // 鼠标移动到一侧
         actions.moveByOffset(920, 0).perform();
@@ -39,13 +50,25 @@ public class TradeScreenshot {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
+        stopWatch.stop();
+
+        stopWatch.start("截图");
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(driver);
+        stopWatch.stop();
+
+        stopWatch.start("保存图片");
         BufferedImage image = screenshot.getImage();
         try {
             ImageIO.write(image, "PNG", new File(filePath));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        stopWatch.stop();
+
+        stopWatch.start("关闭浏览器");
         driver.close();
+        stopWatch.stop();
+
+        log.info(stopWatch.prettyPrint());
     }
 }
