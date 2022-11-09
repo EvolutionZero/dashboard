@@ -73,7 +73,7 @@ public class TradeScreenshot {
 //        stopWatch.stop();
 
         stopWatch.start("命令截图");
-        String command = "Page.captureScreenshot";
+        String command = "Page.captureEntirePageScreenshot";
         Object width = driver.executeScript("return document.body.scrollWidth");
         Object height = driver.executeScript("return document.body.scrollHeight");
 
