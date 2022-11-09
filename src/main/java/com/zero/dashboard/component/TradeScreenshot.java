@@ -19,6 +19,7 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
@@ -55,21 +56,21 @@ public class TradeScreenshot {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
         stopWatch.stop();
 
-        stopWatch.start("截图");
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(driver);
-        stopWatch.stop();
+//        stopWatch.start("截图");
+//        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(100)).takeScreenshot(driver);
+//        stopWatch.stop();
+//
+//        stopWatch.start("保存图片");
+//        BufferedImage image = screenshot.getImage();
+//        try {
+//            ImageIO.write(image, "PNG", new File(filePath));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        stopWatch.stop();
 
-        stopWatch.start("保存图片");
-        BufferedImage image = screenshot.getImage();
-        try {
-            ImageIO.write(image, "PNG", new File(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        stopWatch.stop();
-
-        stopWatch.start("关闭浏览器");
-        stopWatch.stop();
+//        stopWatch.start("关闭浏览器");
+//        stopWatch.stop();
 
         stopWatch.start("命令截图");
         String command = "Page.captureScreenshot";
@@ -80,6 +81,14 @@ public class TradeScreenshot {
         Map<String, Object> output = driver.executeCdpCommand(command, params);
         log.info("命令截图: " + JSONUtil.toJsonStr(output));
         log.info("命令截图: " + JSONUtil.toJsonStr(output.keySet()));
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            byte[] byteArray = java.util.Base64.getDecoder().decode((String) output.get("data"));
+            fileOutputStream.write(byteArray);
+            fileOutputStream.close();
+        } catch (IOException e) {
+            log.error("", e);
+        }
         stopWatch.stop();
 
         driver.close();
