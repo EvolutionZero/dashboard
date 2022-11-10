@@ -89,11 +89,11 @@ public class TradeScreenshot {
 
         stopWatch.start("保存图片");
         BufferedImage image = screenshot.getImage();
-        try {
-            ImageIO.write(image, "PNG", new File(filePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            ImageIO.write(image, "PNG", new File(filePath));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         stopWatch.stop();
 
         stopWatch.start("关闭浏览器");
