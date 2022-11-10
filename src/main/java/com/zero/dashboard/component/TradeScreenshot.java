@@ -39,7 +39,7 @@ public class TradeScreenshot {
 //        DRIVER = driver;
 //    }
 
-    public void exec(String url, String filePath) throws InterruptedException {
+    public void exec(String url, String filePath){
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("启动浏览器");
         ChromeOptions options = new ChromeOptions();
@@ -71,7 +71,11 @@ public class TradeScreenshot {
 //        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
 //        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
 //        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
-        Thread.sleep(50);
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         stopWatch.stop();
 
         stopWatch.start("截图");
