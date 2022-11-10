@@ -39,7 +39,7 @@ public class TradeScreenshot {
         DRIVER = driver;
         Actions actions = new Actions(DRIVER);
         actions.moveByOffset(920, 0).perform();
-        driver.get("https://www.baidu.com");
+        driver.get("https://www.baidu.com")
     }
 
     public BufferedImage exec(String url, String filePath){
@@ -55,7 +55,6 @@ public class TradeScreenshot {
 //        driver.manage().window().maximize();
 //        stopWatch.stop();
 
-        DRIVER.close();
         stopWatch.start("打开网页");
         DRIVER.get(url);
         stopWatch.stop();
@@ -101,7 +100,7 @@ public class TradeScreenshot {
         stopWatch.stop();
 
 //        stopWatch.start("关闭浏览器");
-//        driver.close();
+        DRIVER.close();
 //        stopWatch.stop();
 
         log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
