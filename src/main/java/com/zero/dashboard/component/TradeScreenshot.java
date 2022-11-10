@@ -39,7 +39,7 @@ public class TradeScreenshot {
 //        DRIVER = driver;
 //    }
 
-    public void exec(String url, String filePath){
+    public BufferedImage exec(String url, String filePath){
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("启动浏览器");
         ChromeOptions options = new ChromeOptions();
@@ -101,5 +101,6 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+        return image;
     }
 }

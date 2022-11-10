@@ -6,10 +6,7 @@ import cn.hutool.system.OsInfo;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
 import com.zero.dashboard.enums.ScreenshotTypeEnum;
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.UploadObjectArgs;
+import io.minio.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.velocity.Template;
@@ -17,9 +14,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -55,15 +52,20 @@ public class Reporter {
             response.setHtmlPath(htmlPath);
         }
         stopWatch.start("生成图片");
+        BufferedImage bufferedImage = null;
         if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
             String pngPath = fileHomePath + "png/" + fileName + ".png";
-            new TradeScreenshot().exec("file://" + htmlPath, pngPath);
+            bufferedImage = new TradeScreenshot().exec("file://" + htmlPath, pngPath);
             response.setPngPath(pngPath);
         }
         stopWatch.stop();
 
         stopWatch.start("上传图片");
-        uploadToMinio(response.getPngPath(), fileName + ".png");
+        if(bufferedImage != null){
+            uploadToMinio(bufferedImage, fileName + ".png");
+        } else {
+            uploadToMinio(response.getPngPath(), fileName + ".png");
+        }
         stopWatch.stop();
 
         log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
@@ -117,7 +119,35 @@ public class Reporter {
         }catch (Exception e){
             log.error("", e);
         }
-
-
     }
+
+    private void uploadToMinio(BufferedImage bufferedImage, String objectName){
+        try {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "jpeg", os);                          // Passing: ​(RenderedImage im, String formatName, OutputStream output)
+            InputStream is = new ByteArrayInputStream(os.toByteArray());
+
+            MinioClient minioClient = MinioClient.builder()
+                    .endpoint("http://192.168.3.140:9000/")
+                    .credentials("admin","admin123")
+                    .build();
+            String bucketName = "test";
+            boolean found = minioClient.bucketExists(BucketExistsArgs.
+                    builder().bucket(bucketName).build());
+            if (!found){
+                // 新建一个桶
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+            }
+            minioClient.putObject(
+                    PutObjectArgs.builder().bucket(bucketName).object("/233/" + objectName).stream(
+                                    is, is.available(), -1)
+                            .build());
+            System.out.println("上传成功");
+
+        }catch (Exception e){
+            log.error("", e);
+        }
+    }
+
+
 }
