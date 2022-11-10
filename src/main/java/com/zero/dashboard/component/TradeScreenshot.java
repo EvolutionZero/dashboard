@@ -66,16 +66,16 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-//        WebDriverWait wait = new WebDriverWait(driver,5, 10);
-//        wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
-//        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
-//        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
-//        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
-        try {
-            Thread.sleep(50);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        WebDriverWait wait = new WebDriverWait(driver,5, 10);
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("kline")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj")));
+//        try {
+//            Thread.sleep(50);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         stopWatch.stop();
 
         stopWatch.start("截图");
