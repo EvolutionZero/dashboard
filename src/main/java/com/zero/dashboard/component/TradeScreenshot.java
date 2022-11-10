@@ -39,7 +39,7 @@ public class TradeScreenshot {
 //        DRIVER = driver;
 //    }
 
-    public void exec(String url, String filePath){
+    public void exec(String url, String filePath) throws InterruptedException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("启动浏览器");
         ChromeOptions options = new ChromeOptions();
@@ -66,11 +66,12 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-        WebDriverWait wait = new WebDriverWait(driver,5, 10);
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
+//        WebDriverWait wait = new WebDriverWait(driver,5, 10);
+//        wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
+//        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
+//        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
+//        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
+        Thread.sleep(50);
         stopWatch.stop();
 
         stopWatch.start("截图");
