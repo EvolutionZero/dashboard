@@ -66,7 +66,7 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-        WebDriverWait wait = new WebDriverWait(driver,5);
+        WebDriverWait wait = new WebDriverWait(driver,5, 10);
         wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
