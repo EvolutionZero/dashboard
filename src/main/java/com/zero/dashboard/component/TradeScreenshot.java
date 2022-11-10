@@ -66,9 +66,9 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-        WebDriverWait wait = new WebDriverWait(driver,5, 10);
+//        WebDriverWait wait = new WebDriverWait(driver,5, 3);
 
-        new WebDriverWait(driver, 5, 10).until(d -> ((JavascriptExecutor) d)
+        new WebDriverWait(driver, 5, 3).until(d -> ((JavascriptExecutor) d)
                 .executeScript("return document.readyState").equals("complete"));
 
 //        wait.until(ExpectedConditions.elementToBeSelected(By.id("kline")));
