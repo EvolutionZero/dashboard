@@ -25,23 +25,9 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TradeScreenshot {
 
-    private static final WebDriver DRIVER;
-
-    static {
-        ChromeOptions options = new ChromeOptions();
-        if(new OsInfo().isLinux()){
-            options.setBinary("/opt/google/chrome/chrome");
-            options.addArguments("--headless", "--no-sandbox", "--window-size=1920,1080");
-        }
-        WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-        driver.manage().window().maximize();
-        DRIVER = driver;
-    }
-
-    public void exec(String url, String filePath){
-        StopWatch stopWatch = new StopWatch();
-//        stopWatch.start("启动浏览器");
+//    private static final WebDriver DRIVER;
+//
+//    static {
 //        ChromeOptions options = new ChromeOptions();
 //        if(new OsInfo().isLinux()){
 //            options.setBinary("/opt/google/chrome/chrome");
@@ -50,14 +36,28 @@ public class TradeScreenshot {
 //        WebDriver driver = new ChromeDriver(options);
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 //        driver.manage().window().maximize();
-//        stopWatch.stop();
+//        DRIVER = driver;
+//    }
+
+    public void exec(String url, String filePath){
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start("启动浏览器");
+        ChromeOptions options = new ChromeOptions();
+        if(new OsInfo().isLinux()){
+            options.setBinary("/opt/google/chrome/chrome");
+            options.addArguments("--headless", "--no-sandbox", "--window-size=1920,1080");
+        }
+        WebDriver driver = new ChromeDriver(options);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+        stopWatch.stop();
 
         stopWatch.start("打开网页");
-        DRIVER.get(url);
+        driver.get(url);
         stopWatch.stop();
 
         stopWatch.start("开始动作");
-        Actions actions = new Actions(DRIVER);
+        Actions actions = new Actions(driver);
         stopWatch.stop();
 
         // 鼠标移动到一侧
@@ -66,7 +66,7 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-        WebDriverWait wait = new WebDriverWait(DRIVER,5);
+        WebDriverWait wait = new WebDriverWait(driver,5);
         wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
@@ -74,7 +74,7 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("截图");
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(3)).takeScreenshot(DRIVER);
+        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(3)).takeScreenshot(driver);
         stopWatch.stop();
 
         stopWatch.start("保存图片");
@@ -87,7 +87,7 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("关闭浏览器");
-        DRIVER.close();
+        driver.close();
         stopWatch.stop();
 
         log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
