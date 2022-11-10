@@ -67,10 +67,10 @@ public class TradeScreenshot {
 
         stopWatch.start("等待渲染完成");
         WebDriverWait wait = new WebDriverWait(driver,5, 10);
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("kline")));
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume")));
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd")));
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj")));
+        wait.until(ExpectedConditions.elementToBeSelected(By.id("kline")));
+        wait.until(ExpectedConditions.elementToBeSelected(By.id("volume")));
+        wait.until(ExpectedConditions.elementToBeSelected(By.id("macd")));
+        wait.until(ExpectedConditions.elementToBeSelected(By.id("kdj")));
 //        try {
 //            Thread.sleep(50);
 //        } catch (InterruptedException e) {
