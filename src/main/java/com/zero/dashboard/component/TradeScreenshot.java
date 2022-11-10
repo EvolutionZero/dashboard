@@ -37,6 +37,9 @@ public class TradeScreenshot {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.manage().window().maximize();
         DRIVER = driver;
+        Actions actions = new Actions(DRIVER);
+        actions.moveByOffset(920, 0).perform();
+
     }
 
     public BufferedImage exec(String url, String filePath){
@@ -56,14 +59,14 @@ public class TradeScreenshot {
         DRIVER.get(url);
         stopWatch.stop();
 
-        stopWatch.start("开始动作");
-        Actions actions = new Actions(DRIVER);
-        stopWatch.stop();
-
-        // 鼠标移动到一侧
-        stopWatch.start("鼠标移动到一侧");
-        actions.moveByOffset(920, 0).perform();
-        stopWatch.stop();
+//        stopWatch.start("开始动作");
+//        Actions actions = new Actions(DRIVER);
+//        stopWatch.stop();
+//
+//        // 鼠标移动到一侧
+//        stopWatch.start("鼠标移动到一侧");
+//        actions.moveByOffset(920, 0).perform();
+//        stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
 //        WebDriverWait wait = new WebDriverWait(driver,5, 3);
