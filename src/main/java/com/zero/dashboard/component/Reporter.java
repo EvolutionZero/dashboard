@@ -23,6 +23,7 @@ import java.io.StringWriter;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class Reporter {
@@ -65,7 +66,7 @@ public class Reporter {
         uploadToMinio(response.getPngPath(), fileName + ".png");
         stopWatch.stop();
 
-        log.info(stopWatch.prettyPrint());
+        log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
         //FIXME PDF截图有问题暂时不用
 //        new Trade2Pdf().exec("file://" + htmlPath, fileHomePath + "pdf/" + fileName + ".pdf");
         return response;
