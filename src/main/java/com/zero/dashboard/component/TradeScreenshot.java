@@ -39,7 +39,7 @@ public class TradeScreenshot {
         DRIVER = driver;
         Actions actions = new Actions(DRIVER);
         actions.moveByOffset(920, 0).perform();
-        driver.get("https://www.baidu.com")
+        driver.get("https://www.baidu.com");
     }
 
     public BufferedImage exec(String url, String filePath){
