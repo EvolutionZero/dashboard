@@ -33,14 +33,9 @@ public class TradeScreenshot {
                     "--no-sandbox",
                     "--window-size=1920,1080" ,
                     "--disable-dev-shm-usage",
-                    "--disk-cache-dir=/opt/selenium/opt/dashboard/cache",
-                    "--disable-extensions",
-                    "--disable-gpu",
-                    "--disable-software-rasterizer",
-                    "--ignore-certificate-errors",
-                    "--allow-running-insecure-content"
+                    "--disk-cache-dir=/opt/selenium/opt/dashboard/cache"
             );
-            options.setCapability("pageLoadStrategy", "none");
+//            options.setCapability("pageLoadStrategy", "none");
         }
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
