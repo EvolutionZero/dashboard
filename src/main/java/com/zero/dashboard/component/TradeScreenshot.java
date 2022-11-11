@@ -46,13 +46,16 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-//        new WebDriverWait(driver, 5, 3).until(d -> ((JavascriptExecutor) d)
-//                .executeScript("return document.readyState").equals("complete"));
-        try {
-            Thread.sleep(30);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        new WebDriverWait(driver, 5, 3).until(d -> ((JavascriptExecutor) d)
+                .executeScript("return document.readyState").equals("complete"));
+
+
+        // 1.5-2秒
+//        try {
+//            Thread.sleep(30);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
         stopWatch.stop();
 
         stopWatch.start("截图");
