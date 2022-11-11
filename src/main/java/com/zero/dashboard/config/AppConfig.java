@@ -38,7 +38,12 @@ public class AppConfig {
             ChromeOptions options = new ChromeOptions();
             if(new OsInfo().isLinux()){
                 options.setBinary("/opt/google/chrome/chrome");
-                options.addArguments("--headless", "--no-sandbox", "--window-size=1920,1080" , "--disable-dev-shm-usage");
+                options.addArguments(
+                        "--headless",
+                        "--no-sandbox",
+                        "--window-size=1920,1080" ,
+                        "--disable-dev-shm-usage",
+                        "--disk-cache-dir=/opt/selenium/opt/dashboard/cache");
             }
             WebDriver driver = new ChromeDriver(options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
