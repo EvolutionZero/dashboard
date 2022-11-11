@@ -65,7 +65,7 @@ public class Reporter {
             String html = toHtml(params);
 
             String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/opt/dashboard/report/" : "./";
-            String htmlPath = fileHomePath + "html/" + fileName + (fileName.endsWith(".html") ? "" : ".html");
+            String htmlPath = fileHomePath + "html/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + "_" + fileName + (fileName.endsWith(".html") ? "" : ".html");
             try {
                 FileUtils.forceMkdir(new File(fileHomePath));
                 FileUtils.writeStringToFile(new File(htmlPath), html, "UTF-8");
