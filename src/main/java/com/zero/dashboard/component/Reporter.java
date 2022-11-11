@@ -81,7 +81,7 @@ public class Reporter {
             BufferedImage bufferedImage = null;
             if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
                 String pngPath = fileHomePath + "png/" + fileName + ".png";
-                bufferedImage = new TradeScreenshot().exec("file://" + htmlPath, pngPath);
+                bufferedImage = new TradeScreenshot().exec(driver, "file://" + htmlPath, pngPath);
                 response.setPngPath(pngPath);
             }
             stopWatch.stop();
