@@ -34,11 +34,11 @@ public class AppConfig {
     @Bean(name = "chromes")
     public LinkedBlockingQueue<WebDriver> chromes(){
         LinkedBlockingQueue chromes = new LinkedBlockingQueue();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             ChromeOptions options = new ChromeOptions();
             if(new OsInfo().isLinux()){
                 options.setBinary("/opt/google/chrome/chrome");
-                options.addArguments("--headless", "--no-sandbox", "--window-size=1920,1080");
+                options.addArguments("--headless", "--no-sandbox", "--window-size=1920,1080" , "--disable-dev-shm-usage");
             }
             WebDriver driver = new ChromeDriver(options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
