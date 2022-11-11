@@ -5,3 +5,5 @@ docker images | grep "dashboard" | awk '{print $1":"$2}' | xargs docker rmi
 docker build -t dashboard .
 docker run --name my_dashboard-1 --privileged=true --restart=always  -p 8877:8081 -d dashboard
 docker run --name my_dashboard-2 --privileged=true --restart=always  -p 8878:8081 -d dashboard
+docker run --name my_dashboard-3 --privileged=true --restart=always  -p 8879:8081 -d dashboard
+docker run --name my_dashboard-4 --privileged=true --restart=always  -p 8890:8081 -d dashboard
