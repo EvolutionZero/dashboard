@@ -34,7 +34,7 @@ public class AppConfig {
     @Bean(name = "chromes")
     public LinkedBlockingQueue<WebDriver> chromes(){
         LinkedBlockingQueue chromes = new LinkedBlockingQueue();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 1; i++) {
             ChromeOptions options = new ChromeOptions();
             if(new OsInfo().isLinux()){
                 options.setBinary("/opt/google/chrome/chrome");
