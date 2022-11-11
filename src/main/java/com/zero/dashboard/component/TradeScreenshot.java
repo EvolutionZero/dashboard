@@ -33,7 +33,13 @@ public class TradeScreenshot {
                     "--no-sandbox",
                     "--window-size=1920,1080" ,
                     "--disable-dev-shm-usage",
-                    "--disk-cache-dir=/opt/selenium/opt/dashboard/cache");
+                    "--disk-cache-dir=/opt/selenium/opt/dashboard/cache",
+                    "--disable-extensions",
+                    "--disable-gpu",
+                    "--disable-software-rasterizer",
+                    "--ignore-certificate-errors",
+                    "--allow-running-insecure-content"
+            );
             options.setCapability("pageLoadStrategy", "none");
         }
         WebDriver driver = new ChromeDriver(options);
