@@ -17,6 +17,8 @@ import org.apache.velocity.app.VelocityEngine;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -139,7 +141,7 @@ public class Reporter {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
             }
             minioClient.putObject(
-                    PutObjectArgs.builder().bucket(bucketName).object("/233/" + objectName).stream(
+                    PutObjectArgs.builder().bucket(bucketName).object("/233/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + "_" + objectName).stream(
                                     is, is.available(), -1)
                             .build());
             System.out.println("上传成功");
