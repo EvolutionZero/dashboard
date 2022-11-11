@@ -41,6 +41,9 @@ public class Reporter {
         for (int i = 0; i < 10; i++) {
             try {
                 driver = chromes.poll(100, TimeUnit.MILLISECONDS);
+                if(driver != null){
+                    break;
+                }
             } catch (InterruptedException e) {
                 log.error("", e);
             }
