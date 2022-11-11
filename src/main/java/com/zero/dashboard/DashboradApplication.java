@@ -38,7 +38,7 @@ public class DashboradApplication {
 //        new Web2Pdf().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".pdf");
 //        log.info("完成");
 
-        new LongPictureScreenshot().exec("file:///opt/selenium/opt/dashboard/script/301158.html", fileHomePath + "301158_" + new Date().getTime() + ".png");
+//        new LongPictureScreenshot().exec("file:///opt/selenium/opt/dashboard/script/301158.html", fileHomePath + "301158_" + new Date().getTime() + ".png");
 //        new LongPictureScreenshot().exec("file:///D:/IdeaProjects/eagle-eye/report/000006.html", fileHomePath + "qq_" + new Date().getTime() + ".png");
     }
 
