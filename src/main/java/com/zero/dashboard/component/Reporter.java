@@ -32,25 +32,25 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class Reporter {
 
-    @Resource(name = "chromes")
-    private LinkedBlockingQueue<WebDriver> chromes;
+//    @Resource(name = "chromes")
+//    private LinkedBlockingQueue<WebDriver> chromes;
 
 
     public ScreenshotResponse export(ScreenshotRequest request) {
-        WebDriver driver = null;
-        for (int i = 0; i < 10; i++) {
-            try {
-                driver = chromes.poll(100, TimeUnit.MILLISECONDS);
-                if(driver != null){
-                    break;
-                }
-            } catch (InterruptedException e) {
-                log.error("", e);
-            }
-        }
-        if(driver == null){
-            throw new RuntimeException("无可用driver");
-        }
+//        WebDriver driver = null;
+//        for (int i = 0; i < 10; i++) {
+//            try {
+//                driver = chromes.poll(100, TimeUnit.MILLISECONDS);
+//                if(driver != null){
+//                    break;
+//                }
+//            } catch (InterruptedException e) {
+//                log.error("", e);
+//            }
+//        }
+//        if(driver == null){
+//            throw new RuntimeException("无可用driver");
+//        }
         ScreenshotResponse response = new ScreenshotResponse();
         try {
             StopWatch stopWatch = new StopWatch();
@@ -81,7 +81,7 @@ public class Reporter {
             BufferedImage bufferedImage = null;
             if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
                 String pngPath = fileHomePath + "png/" + fileName + ".png";
-                bufferedImage = new TradeScreenshot().exec(driver, "file://" + htmlPath, pngPath);
+                bufferedImage = new TradeScreenshot().exec("file://" + htmlPath, pngPath);
                 response.setPngPath(pngPath);
             }
             stopWatch.stop();
@@ -97,11 +97,11 @@ public class Reporter {
             log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
 
         } finally {
-            try {
-                chromes.put(driver);
-            } catch (InterruptedException e) {
-                log.error("", e);
-            }
+//            try {
+//                chromes.put(driver);
+//            } catch (InterruptedException e) {
+//                log.error("", e);
+//            }
         }
         //FIXME PDF截图有问题暂时不用
 //        new Trade2Pdf().exec("file://" + htmlPath, fileHomePath + "pdf/" + fileName + ".pdf");
