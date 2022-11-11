@@ -44,6 +44,7 @@ public class AppConfig {
                         "--window-size=1920,1080" ,
                         "--disable-dev-shm-usage",
                         "--disk-cache-dir=/opt/selenium/opt/dashboard/cache");
+                options.setCapability("pageLoadStrategy", "none");
             }
             WebDriver driver = new ChromeDriver(options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
