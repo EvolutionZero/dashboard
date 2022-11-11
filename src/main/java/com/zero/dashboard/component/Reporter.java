@@ -13,7 +13,10 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.openqa.selenium.WebDriver;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -22,55 +25,81 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
+@Component
 public class Reporter {
 
+    @Resource(name = "chromes")
+    private LinkedBlockingQueue<WebDriver> chromes;
+
+
     public ScreenshotResponse export(ScreenshotRequest request) {
-        StopWatch stopWatch = new StopWatch();
-        Map<String, Object> params = request.getParams();
-        String fileName = request.getFileName();
-        if(new OsInfo().isWindows()){
-            params.put("scriptHomePath", "D:/IdeaProjects/dashboard/src/main/resources/velocity");
-        } else {
-            params.put("scriptHomePath", "/opt/selenium/opt/dashboard/script");
+        WebDriver driver = null;
+        for (int i = 0; i < 10; i++) {
+            try {
+                driver = chromes.poll(100, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                log.error("", e);
+            }
         }
-        stopWatch.start("生成html");
-        String html = toHtml(params);
-
-        String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/opt/dashboard/report/" : "./";
-        String htmlPath = fileHomePath + "html/" + fileName + (fileName.endsWith(".html") ? "" : ".html");
-        try {
-            FileUtils.forceMkdir(new File(fileHomePath));
-            FileUtils.writeStringToFile(new File(htmlPath), html, "UTF-8");
-        } catch (IOException e) {
-            log.error("", e);
+        if(driver == null){
+            throw new RuntimeException("无可用driver");
         }
-        stopWatch.stop();
-
         ScreenshotResponse response = new ScreenshotResponse();
-        if(request.getTypes().contains(ScreenshotTypeEnum.HTML.getValue())){
-            response.setHtmlPath(htmlPath);
-        }
-        stopWatch.start("生成图片");
-        BufferedImage bufferedImage = null;
-        if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
-            String pngPath = fileHomePath + "png/" + fileName + ".png";
-            bufferedImage = new TradeScreenshot().exec("file://" + htmlPath, pngPath);
-            response.setPngPath(pngPath);
-        }
-        stopWatch.stop();
+        try {
+            StopWatch stopWatch = new StopWatch();
+            Map<String, Object> params = request.getParams();
+            String fileName = request.getFileName();
+            if(new OsInfo().isWindows()){
+                params.put("scriptHomePath", "D:/IdeaProjects/dashboard/src/main/resources/velocity");
+            } else {
+                params.put("scriptHomePath", "/opt/selenium/opt/dashboard/script");
+            }
+            stopWatch.start("生成html");
+            String html = toHtml(params);
 
-        stopWatch.start("上传图片");
-        if(bufferedImage != null){
-            uploadToMinio(bufferedImage, fileName + ".png");
-        } else {
-            uploadToMinio(response.getPngPath(), fileName + ".png");
-        }
-        stopWatch.stop();
+            String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/opt/dashboard/report/" : "./";
+            String htmlPath = fileHomePath + "html/" + fileName + (fileName.endsWith(".html") ? "" : ".html");
+            try {
+                FileUtils.forceMkdir(new File(fileHomePath));
+                FileUtils.writeStringToFile(new File(htmlPath), html, "UTF-8");
+            } catch (IOException e) {
+                log.error("", e);
+            }
+            stopWatch.stop();
 
-        log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+            if(request.getTypes().contains(ScreenshotTypeEnum.HTML.getValue())){
+                response.setHtmlPath(htmlPath);
+            }
+            stopWatch.start("生成图片");
+            BufferedImage bufferedImage = null;
+            if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
+                String pngPath = fileHomePath + "png/" + fileName + ".png";
+                bufferedImage = new TradeScreenshot().exec("file://" + htmlPath, pngPath);
+                response.setPngPath(pngPath);
+            }
+            stopWatch.stop();
+
+            stopWatch.start("上传图片");
+            if(bufferedImage != null){
+                uploadToMinio(bufferedImage, fileName + ".png");
+            } else {
+                uploadToMinio(response.getPngPath(), fileName + ".png");
+            }
+            stopWatch.stop();
+
+            log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
+
+        } finally {
+            try {
+                chromes.put(driver);
+            } catch (InterruptedException e) {
+                log.error("", e);
+            }
+        }
         //FIXME PDF截图有问题暂时不用
 //        new Trade2Pdf().exec("file://" + htmlPath, fileHomePath + "pdf/" + fileName + ".pdf");
         return response;
