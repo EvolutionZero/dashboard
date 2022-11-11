@@ -98,7 +98,6 @@ public class Reporter {
 
         } finally {
             try {
-                driver.close();
                 chromes.put(driver);
             } catch (InterruptedException e) {
                 log.error("", e);

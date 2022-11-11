@@ -40,7 +40,7 @@ public class TradeScreenshot {
 
     public BufferedImage exec(WebDriver driver, String url, String filePath){
         StopWatch stopWatch = new StopWatch();
-
+        log.info("driver:" + driver);
         stopWatch.start("打开网页");
         driver.get(url);
         stopWatch.stop();
