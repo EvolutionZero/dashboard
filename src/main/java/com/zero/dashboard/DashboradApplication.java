@@ -16,7 +16,6 @@ public class DashboradApplication {
 
     public static void main(String[] args) {
         String fileHomePath = "./";
-        System.setProperty("webdriver.chrome.whitelistedIps", "127.0.0.1");
         if(new OsInfo().isWindows()){
             System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\107.0.5304.62\\chromedriver.exe");
         } else {
