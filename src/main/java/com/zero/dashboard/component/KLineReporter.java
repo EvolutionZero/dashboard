@@ -13,45 +13,31 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.openqa.selenium.WebDriver;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * K线上报
+ * @author Zero
+ * @since 2022.11.12 16:07
+ */
 @Slf4j
 @Component
-public class Reporter {
-
-//    @Resource(name = "chromes")
-//    private LinkedBlockingQueue<WebDriver> chromes;
+public class KLineReporter {
 
 
-    public ScreenshotResponse export(ScreenshotRequest request) {
-//        WebDriver driver = null;
-//        for (int i = 0; i < 10; i++) {
-//            try {
-//                driver = chromes.poll(100, TimeUnit.MILLISECONDS);
-//                if(driver != null){
-//                    break;
-//                }
-//            } catch (InterruptedException e) {
-//                log.error("", e);
-//            }
-//        }
-//        if(driver == null){
-//            throw new RuntimeException("无可用driver");
-//        }
+    public ScreenshotResponse exec(ScreenshotRequest request) {
+
         ScreenshotResponse response = new ScreenshotResponse();
+        String htmlPath = "";
         try {
             StopWatch stopWatch = new StopWatch();
             Map<String, Object> params = request.getParams();
@@ -65,7 +51,7 @@ public class Reporter {
             String html = toHtml(params);
 
             String fileHomePath = new OsInfo().isLinux() ? "/opt/selenium/opt/dashboard/report/" : "./";
-            String htmlPath = fileHomePath + "html/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + "_" + fileName + (fileName.endsWith(".html") ? "" : ".html");
+            htmlPath = fileHomePath + "html/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS")) + "_" + fileName + (fileName.endsWith(".html") ? "" : ".html");
             try {
                 FileUtils.forceMkdir(new File(fileHomePath));
                 FileUtils.writeStringToFile(new File(htmlPath), html, "UTF-8");
@@ -74,37 +60,24 @@ public class Reporter {
             }
             stopWatch.stop();
 
-            if(request.getTypes().contains(ScreenshotTypeEnum.HTML.getValue())){
-                response.setHtmlPath(htmlPath);
-            }
+            response.setHtmlPath(htmlPath);
+
             stopWatch.start("生成图片");
-            BufferedImage bufferedImage = null;
-            if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
-                String pngPath = fileHomePath + "png/" + fileName + ".png";
-                bufferedImage = new TradeScreenshot().exec("file://" + htmlPath);
-                response.setPngPath(pngPath);
-            }
+            String pngPath = fileHomePath + "png/" + fileName + ".png";
+            BufferedImage bufferedImage = new TradeScreenshot().exec("file://" + htmlPath);
+            response.setPngPath(pngPath);
             stopWatch.stop();
 
             stopWatch.start("上传图片");
-            if(bufferedImage != null){
-                uploadToMinio(bufferedImage, fileName + ".png");
-            } else {
-                uploadToMinio(response.getPngPath(), fileName + ".png");
-            }
+            uploadToMinio(bufferedImage, fileName + ".png");
             stopWatch.stop();
 
             log.info(stopWatch.prettyPrint(TimeUnit.MILLISECONDS));
 
         } finally {
-//            try {
-//                chromes.put(driver);
-//            } catch (InterruptedException e) {
-//                log.error("", e);
-//            }
+            FileUtils.deleteQuietly(new File(htmlPath));
         }
-        //FIXME PDF截图有问题暂时不用
-//        new Trade2Pdf().exec("file://" + htmlPath, fileHomePath + "pdf/" + fileName + ".pdf");
+
         return response;
     }
 
@@ -127,38 +100,10 @@ public class Reporter {
         return stringWriter.toString();
     }
 
-
-    private void uploadToMinio(String filePath, String objectName){
-        try {
-            MinioClient minioClient = MinioClient.builder()
-                    .endpoint("http://192.168.3.140:9000/")
-                    .credentials("admin","admin123")
-                    .build();
-            String bucketName = "test";
-            boolean found = minioClient.bucketExists(BucketExistsArgs.
-                    builder().bucket(bucketName).build());
-            if (!found){
-                // 新建一个桶
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-            }
-            minioClient.uploadObject(
-                    UploadObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object("/233/" + objectName)
-                            .filename(filePath) // 本地磁盘的路径
-                            .build()
-            );
-            System.out.println("上传成功");
-
-        }catch (Exception e){
-            log.error("", e);
-        }
-    }
-
     private void uploadToMinio(BufferedImage bufferedImage, String objectName){
         try {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "jpeg", os);                          // Passing: ​(RenderedImage im, String formatName, OutputStream output)
+            ImageIO.write(bufferedImage, "jpeg", os);
             InputStream is = new ByteArrayInputStream(os.toByteArray());
 
             MinioClient minioClient = MinioClient.builder()

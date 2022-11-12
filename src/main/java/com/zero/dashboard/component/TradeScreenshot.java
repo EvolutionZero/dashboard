@@ -22,8 +22,7 @@ import java.util.concurrent.TimeUnit;
 public class TradeScreenshot {
 
     private static final WebDriver DRIVER;
-//
-//    //TODO 多线程改造，每个线程拥有一个Driver,每使用100次重新连接
+
     static {
         ChromeOptions options = new ChromeOptions();
         if(new OsInfo().isLinux()){
@@ -35,7 +34,6 @@ public class TradeScreenshot {
                     "--disable-dev-shm-usage",
                     "--disk-cache-dir=/opt/selenium/opt/dashboard/cache"
             );
-//            options.setCapability("pageLoadStrategy", "none");
         }
         WebDriver driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -45,8 +43,8 @@ public class TradeScreenshot {
         actions.moveByOffset(920, 0).perform();
     }
 
-    public BufferedImage exec(String url, String filePath){
-        StopWatch stopWatch = new StopWatch();
+    public BufferedImage exec(String url){
+        StopWatch stopWatch = new StopWatch("截图流程");
         log.info("driver:" + DRIVER);
         stopWatch.start("打开网页");
         DRIVER.get(url);
@@ -55,14 +53,6 @@ public class TradeScreenshot {
         stopWatch.start("等待渲染完成");
         new WebDriverWait(DRIVER, 5, 3).until(d -> ((JavascriptExecutor) d)
                 .executeScript("return document.readyState").equals("complete"));
-
-
-        // 1.5-2秒
-//        try {
-//            Thread.sleep(30);
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
         stopWatch.stop();
 
         stopWatch.start("截图");

@@ -17,4 +17,9 @@ public class ReportServiceImpl implements ReportService {
     public ScreenshotResponse screenshot(ScreenshotRequest request) {
         return reporter.export(request);
     }
+
+    @Override
+    public ScreenshotResponse kline(ScreenshotRequest request) {
+        return reporter.export(request);
+    }
 }

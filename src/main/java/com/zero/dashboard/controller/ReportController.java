@@ -24,4 +24,10 @@ public class ReportController {
     public ScreenshotResponse screenshot(@RequestBody ScreenshotRequest request){
         return reportService.screenshot(request);
     }
+
+    @PostMapping(value = "/kline", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public ScreenshotResponse kline(@RequestBody ScreenshotRequest request){
+        return reportService.kline(request);
+    }
 }
