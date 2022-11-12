@@ -18,28 +18,20 @@ public class DashboradApplication {
         String fileHomePath = "./";
         System.setProperty("webdriver.chrome.whitelistedIps", "127.0.0.1");
         if(new OsInfo().isWindows()){
-            System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\102.0.5005.61\\chromedriver.exe");
+            System.setProperty("webdriver.chrome.driver", "D:\\develop\\chrome-driver\\107.0.5304.62\\chromedriver.exe");
         } else {
             System.setProperty("webdriver.chrome.driver", "/opt/selenium/chromedriver-98.0.4758.80");
             fileHomePath = "/opt/selenium/opt/dashboard/report/";
         }
         SpringApplication.run(DashboradApplication.class, args);
 
-
-//        log.info("头条截图");
+//                log.info("头条截图");
 //        try {
 //            new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", fileHomePath + "TouTiao_" + new Date().getTime() + ".png");
 //        } catch (Exception e) {
 //            log.error("", e);
 //        }
-//        log.info("QQ截图");
-//        new LongPictureScreenshot().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".png");
-//        log.info("转PDF");
-//        new Web2Pdf().exec("https://www.qq.com", fileHomePath + "qq_" + new Date().getTime() + ".pdf");
-//        log.info("完成");
 
-//        new LongPictureScreenshot().exec("file:///opt/selenium/opt/dashboard/script/301158.html", fileHomePath + "301158_" + new Date().getTime() + ".png");
-//        new LongPictureScreenshot().exec("file:///D:/IdeaProjects/eagle-eye/report/000006.html", fileHomePath + "qq_" + new Date().getTime() + ".png");
     }
 
 }
