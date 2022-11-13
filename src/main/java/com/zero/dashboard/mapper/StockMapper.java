@@ -16,10 +16,4 @@ import java.util.List;
  */
 public interface StockMapper extends BaseMapper<Stock> {
 
-    void saveAll(List<Stock> list);
-
-    @Select("select * from stock")
-    List<Stock> calculateMACD();
-
-
 }

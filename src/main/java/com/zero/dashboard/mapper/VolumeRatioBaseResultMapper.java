@@ -19,11 +19,6 @@ import java.util.List;
  */
 public interface VolumeRatioBaseResultMapper extends BaseMapper<VolumeRatioBaseResult> {
 
-    void saveAll(List<VolumeRatioBaseResult> list);
-
-    @Select("select max(date) from volume_ratio_base_result where code = #{code}")
-    LocalDate getLastestDate(@Param("code") String code);
-
     @Select("<script>"
             + "select d.open, d.close, d.date, d.change_percent, d.trading_volume, case when d.turnover is null then 0 else d.turnover end, case when avg is null then d.trading_volume else vrbr.avg end  from (select * from daily d where code = #{code}) as d\n"
             + "left join volume_ratio_base_result vrbr on d.code = vrbr.code and d.date = vrbr.date\n"

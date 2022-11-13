@@ -2,14 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.dashboard.mapper.TurnoverBaseResultMapper">
 
-
-    <insert id="saveAll">
-        INSERT INTO turnover_base_result (code, "date", turnover, status, focus, intervene, operate_strategy, trend)
-        VALUES
-        <foreach collection="list" item="item" separator=",">
-            (#{item.code},#{item.date},#{item.turnover},#{item.status},#{item.focus},#{item.intervene},#{item.operateStrategy},#{item.trend})
-        </foreach>
-        ON conflict(code, "date") DO NOTHING
-    </insert>
-
 </mapper>

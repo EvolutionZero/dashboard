@@ -2,13 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.dashboard.mapper.KdjBaseResultMapper">
 
-    <insert id="saveAll">
-        INSERT INTO kdj_base_result (code, "date", n, pre_k, pre_d, pre_j, cur_k, cur_d, cur_j, area, market, "cross", k_angle, d_angle, j_angle, inclination)
-        VALUES
-        <foreach collection="list" item="item" separator=",">
-            (#{item.code},#{item.date},#{item.n},#{item.preK},#{item.preD},#{item.preJ},#{item.curK},#{item.curD},#{item.curJ},#{item.area},#{item.market},#{item.cross},#{item.kAngle},#{item.dAngle},#{item.jAngle},#{item.inclination})
-        </foreach>
-        ON conflict(code, "date", n) DO NOTHING
-    </insert>
-
 </mapper>

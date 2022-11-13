@@ -2,12 +2,6 @@ package com.zero.dashboard.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.dashboard.entity.Macd;
-import com.zero.dashboard.entity.MacdBaseResult;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * <p>
@@ -19,11 +13,5 @@ import java.util.List;
  */
 public interface MacdMapper extends BaseMapper<Macd> {
 
-    void saveAll(List<Macd> list);
-
-    List<MacdBaseResult> analyse(@Param("code") String code, @Param("date") LocalDate date);
-
-    @Select("select max(date) from macd where code = #{code}")
-    LocalDate getLastestDate(@Param("code") String code);
 
 }

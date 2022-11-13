@@ -2,47 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zero.dashboard.mapper.KdjMapper">
 
-    <insert id="saveAll">
-        INSERT INTO kdj (code, "date", n, rsv, k, d, j)
-        VALUES
-        <foreach collection="list" item="item" separator=",">
-            (#{item.code},#{item.date},#{item.n},#{item.rsv},#{item.k},#{item.d},#{item.j})
-        </foreach>
-        ON conflict(code, "date", n) DO NOTHING
-    </insert>
-
-
-    <select id="analyse" resultType="com.zero.dashboard.entity.KdjBaseResult">
-        <![CDATA[
-        with compare as (
-            select k2.code, k2.date, k2.n, k1.k as pre_k, k1.d as pre_d, k1.j as pre_j, k2.k,k2.d,k2.j from (select row_number() over (order by "date" asc) as rownum, * from kdj where code = #{code} and date > #{date}) as  k1
-                                                                                                          right join (select row_number() over (order by "date" asc) as rownum, * from kdj where code = #{code} and date > #{date}) as k2
-                                                                                                                     on k1.code = k2.code and k1.rownum = k2.rownum - 1
-            where k1.k is not null
-            order by k2.date
-        ),
-             base_result as (
-                 select code, date, n, pre_k, pre_d, pre_j , k as cur_k , d as cur_d, j as cur_j,
-            case
-            when k < 20 and d < 20 and j < 20 then '超卖区'
-            when k > 80 and d > 80 and j > 80 then '超买区'
-            when k >= 20 and k <= 80 and d >= 20 and d <= 80 and j >= 20 and j <= 80 then '平衡区'
-        end as area,
-        case
-            when k < 50 and d < 50 and j < 50 then '空头市场'
-            when k >= 50 and d >= 50 and j >= 50 then '多头市场'
-                end as market,
-        case
-            when k > pre_k and pre_d > pre_k and k > d then 'KDJ金叉'
-            when k < pre_k and pre_d < pre_k and k < d then 'KDJ死叉'
-                end as cross,
-        degrees(atan(k - pre_k)) as k_angle,
-        degrees(atan(d - pre_d)) as d_angle,
-        degrees(atan(j - pre_j)) as j_angle
-        from compare
-        )
-        select *, k_angle - d_angle as inclination from base_result
-        ]]>
-    </select>
-
 </mapper>

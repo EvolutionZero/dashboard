@@ -2,13 +2,10 @@ package com.zero.dashboard.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zero.dashboard.entity.Daily;
-import com.zero.dashboard.entity.TurnoverBaseResult;
-import com.zero.dashboard.entity.VolumeRatioBaseResult;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * <p>
@@ -20,15 +17,6 @@ import java.util.List;
  */
 public interface DailyMapper extends BaseMapper<Daily> {
 
-    void saveAll(List<Daily> list);
-
-
-    List<TurnoverBaseResult> analyseTurnover(@Param("code") String code, @Param("date") LocalDate date);
-
-    List<VolumeRatioBaseResult> analyseVolumeRatio(@Param("code") String code, @Param("date") LocalDate date);
-
-    @Select("select max(date) from daily d where code = #{code}")
-    LocalDate getLastestDate(@Param("code") String code);
 
     @Select("select min(d1.date) from (select row_number() over (order by \"date\" asc) as rownum, * from daily where code = #{code}) as d1\n" +
             "right join (select row_number() over (order by \"date\" asc) as rownum, * from daily where code = #{code}) as d2\n" +
