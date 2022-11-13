@@ -47,7 +47,6 @@ public class DailyReporter {
 
     public void exec(DailyReportContext ctx) {
 
-//        ScreenshotResponse response = new ScreenshotResponse();
         String htmlPath = "";
         try {
             StopWatch stopWatch = new StopWatch();
@@ -71,12 +70,9 @@ public class DailyReporter {
             }
             stopWatch.stop();
 
-//            response.setHtmlPath(htmlPath);
-
             stopWatch.start("生成图片");
             String pngPath = fileHomePath + "png/" + fileName + ".png";
             BufferedImage bufferedImage = new TradeScreenshot().exec("file://" + htmlPath);
-//            response.setPngPath(pngPath);
             stopWatch.stop();
 
             stopWatch.start("上传图片");
@@ -89,7 +85,6 @@ public class DailyReporter {
             FileUtils.deleteQuietly(new File(htmlPath));
         }
 
-//        return response;
     }
 
     public String toHtml(String templateName, Map<String, Object> params) {
@@ -100,7 +95,6 @@ public class DailyReporter {
         properties.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
         VelocityEngine engine = new VelocityEngine();
         engine.init(properties);
-//        String templateName = "velocity/klineTemplate.vm";
 
         StringWriter stringWriter = new StringWriter();
         Template template = engine.getTemplate(templateName, "UTF-8");
