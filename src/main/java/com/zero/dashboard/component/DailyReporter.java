@@ -72,7 +72,7 @@ public class DailyReporter {
 
             stopWatch.start("生成图片");
             String pngPath = fileHomePath + "png/" + fileName + ".png";
-            BufferedImage bufferedImage = new TradeScreenshot().exec("file://" + htmlPath);
+            BufferedImage bufferedImage = new TradeScreenshot().exec("file://" + htmlPath, ctx.getDivs());
             stopWatch.stop();
 
             stopWatch.start("上传图片");

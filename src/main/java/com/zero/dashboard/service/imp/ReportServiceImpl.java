@@ -3,6 +3,7 @@ package com.zero.dashboard.service.imp;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
+import com.beust.jcommander.internal.Lists;
 import com.zero.dashboard.component.DailyReporter;
 import com.zero.dashboard.component.Reporter;
 import com.zero.dashboard.dto.bo.VolumeInfo;
@@ -66,6 +67,7 @@ public class ReportServiceImpl implements ReportService {
         ctx.setObjectPath(request.getObjectPath());
         ctx.setTemplateName("velocity/reportTemplate.vm");
         ctx.setParams(generateWholeVelocityParams(new VelocityParamsContext(request)));
+        ctx.setDivs(Lists.newArrayList("kline", "volume", "macd", "kdj"));
         dailyReporter.exec(ctx);
     }
 
@@ -80,6 +82,7 @@ public class ReportServiceImpl implements ReportService {
         ctx.setObjectPath(request.getObjectPath());
         ctx.setTemplateName("velocity/klineTemplate.vm");
         ctx.setParams(generateKLineVelocityParams(new VelocityParamsContext( request)));
+        ctx.setDivs(Lists.newArrayList("kline"));
         dailyReporter.exec(ctx);
     }
 

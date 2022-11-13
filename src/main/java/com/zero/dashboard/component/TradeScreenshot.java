@@ -18,6 +18,7 @@ import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import java.awt.image.BufferedImage;
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -45,7 +46,7 @@ public class TradeScreenshot {
         actions.moveByOffset(920, 0).perform();
     }
 
-    public BufferedImage exec(String url){
+    public BufferedImage exec(String url, List<String> divs){
         StopWatch stopWatch = new StopWatch("截图流程");
         log.info("driver:" + DRIVER);
         stopWatch.start("打开网页");
@@ -53,13 +54,10 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-//        new WebDriverWait(DRIVER, 5, 3).until(d -> ((JavascriptExecutor) d)
-//                .executeScript("return document.readyState").equals("complete"));
-        WebDriverWait wait = new WebDriverWait(DRIVER,5);
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
-        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
+        WebDriverWait wait = new WebDriverWait(DRIVER,5, 10);
+        for (String div : divs) {
+            wait.until(ExpectedConditions.elementToBeClickable(By.id(div))).click();
+        }
         stopWatch.stop();
 
         stopWatch.start("截图");

@@ -3,6 +3,7 @@ package com.zero.dashboard.component;
 
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.system.OsInfo;
+import com.beust.jcommander.internal.Lists;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
 import com.zero.dashboard.enums.ScreenshotTypeEnum;
@@ -81,7 +82,7 @@ public class Reporter {
             BufferedImage bufferedImage = null;
             if(request.getTypes().contains(ScreenshotTypeEnum.PNG.getValue())){
                 String pngPath = fileHomePath + "png/" + fileName + ".png";
-                bufferedImage = new TradeScreenshot().exec("file://" + htmlPath);
+                bufferedImage = new TradeScreenshot().exec("file://" + htmlPath, Lists.newArrayList("kline", "volume", "macd", "kdj"));
                 response.setPngPath(pngPath);
             }
             stopWatch.stop();
