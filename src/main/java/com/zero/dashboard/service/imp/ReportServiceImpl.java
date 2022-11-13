@@ -4,12 +4,11 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import com.zero.dashboard.component.DailyReporter;
-import com.zero.dashboard.component.KLineReporter;
 import com.zero.dashboard.component.Reporter;
 import com.zero.dashboard.dto.bo.VolumeInfo;
 import com.zero.dashboard.dto.ctx.DailyReportContext;
 import com.zero.dashboard.dto.ctx.VelocityParamsContext;
-import com.zero.dashboard.dto.request.KLineReportRequest;
+import com.zero.dashboard.dto.request.DailyReportRequest;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
 import com.zero.dashboard.entity.*;
@@ -35,9 +34,6 @@ public class ReportServiceImpl implements ReportService {
     private Reporter reporter;
 
     @Autowired
-    private KLineReporter kLineReporter;
-
-    @Autowired
     private DailyMapper dailyMapper;
 
     @Autowired
@@ -61,7 +57,21 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public void kline(KLineReportRequest request) {
+    public void whole(DailyReportRequest request) {
+        DailyReportContext ctx = new DailyReportContext();
+        ctx.setCode(request.getCode());
+        ctx.setName(request.getName());
+        ctx.setFileName(request.getFileName());
+        ctx.setBucketName(request.getBucketName());
+        ctx.setObjectPath(request.getObjectPath());
+        ctx.setTemplateName("velocity/reportTemplate.vm");
+        ctx.setParams(generateWholeVelocityParams(new VelocityParamsContext(request)));
+        dailyReporter.exec(ctx);
+    }
+
+
+    @Override
+    public void kline(DailyReportRequest request) {
         DailyReportContext ctx = new DailyReportContext();
         ctx.setCode(request.getCode());
         ctx.setName(request.getName());

@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 /**
- * K线上报
+ * 日线上报
  * @author Zero
  * @since 2022.11.12 16:07
  */

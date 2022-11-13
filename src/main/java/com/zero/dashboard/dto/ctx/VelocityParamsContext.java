@@ -1,6 +1,6 @@
 package com.zero.dashboard.dto.ctx;
 
-import com.zero.dashboard.dto.request.KLineReportRequest;
+import com.zero.dashboard.dto.request.DailyReportRequest;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ public class VelocityParamsContext {
     private int forward;
 
 
-    public VelocityParamsContext(KLineReportRequest request){
+    public VelocityParamsContext(DailyReportRequest request){
         this.focusDate = request.getFocusDate();
         this.backoff = request.getBackoff();
         this.forward = request.getForward();

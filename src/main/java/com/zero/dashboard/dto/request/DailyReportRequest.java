@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Data
-public class KLineReportRequest {
+public class DailyReportRequest {
     private String code;
     private String name;
     private LocalDate focusDate;

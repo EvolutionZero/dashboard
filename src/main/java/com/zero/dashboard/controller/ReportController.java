@@ -1,6 +1,6 @@
 package com.zero.dashboard.controller;
 
-import com.zero.dashboard.dto.request.KLineReportRequest;
+import com.zero.dashboard.dto.request.DailyReportRequest;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
 import com.zero.dashboard.service.ReportService;
@@ -26,9 +26,15 @@ public class ReportController {
         return reportService.screenshot(request);
     }
 
-    @PostMapping(value = "/kline", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/daily/whole", produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public void kline(@RequestBody KLineReportRequest request){
+    public void whole(@RequestBody DailyReportRequest request){
+        reportService.whole(request);
+    }
+
+    @PostMapping(value = "/daily/kline", produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ResponseBody
+    public void kline(@RequestBody DailyReportRequest request){
         reportService.kline(request);
     }
 }
