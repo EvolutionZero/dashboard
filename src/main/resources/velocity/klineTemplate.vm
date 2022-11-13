@@ -5,8 +5,7 @@
     <title>${title}</title>
 </head>
 <body style="height: 100%; margin: 0">
-<div id="kline" style="height: 100%"></div>
-<div id="volume" style="height: 50%"></div>
+    <div id="kline" style="height: 100%"></div>
 </body>
 <script type="text/javascript" src="${scriptHomePath}/jquery"></script>
 <script type="text/javascript" src="${scriptHomePath}/echarts.zero.js"></script>
@@ -320,112 +319,4 @@
     window.addEventListener('resize', klineChart.resize);
 </script>
 
-
-<!-- 交易量展示 -->
-<script type="text/javascript">
-    var volumeChart = echarts.init(document.getElementById('volume'), 'dark', {
-        renderer: 'canvas',
-        useDirtyRect: false
-    });
-
-    var option = {
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'cross',
-                crossStyle: {
-                    color: '#999'
-                }
-            }
-        },
-        toolbox: {
-            feature: {
-                dataView: {show: true, readOnly: false},
-                magicType: {show: true, type: ['line', 'bar']},
-                restore: {show: true},
-                saveAsImage: {show: true}
-            }
-        },
-        legend: {
-            data: ['交易量', '近5天平均交易量', '换手率'],
-            selected : {
-                '换手率' : false
-            }
-        },
-        <!-- X轴 -->
-        xAxis: [
-            {
-                type: 'category',
-                data: ${volumeDates},
-                axisPointer: {
-                    type: 'shadow'
-                }
-            }
-        ],
-        yAxis: [
-            {
-                type: 'value',
-                name: '近5天平均交易量',
-                min: 0,
-                max: ${volumeMax},
-                interval: ${volumeInterval},
-                axisLabel: {
-                    formatter: '{value}'
-                }
-            },
-            {
-                type: 'value',
-                name: '换手率',
-                min: 0,
-                max: ${turnoverMax},
-                interval: ${turnoverInterval},
-                axisLabel: {
-                    formatter: '{value}'
-                }
-            }
-        ],
-        series: [
-            {
-                name: '交易量',
-                type: 'bar',
-                tooltip: {
-                    valueFormatter: function (value) {
-                        return value;
-                    }
-                },
-                data: ${volumeBarData}
-            },
-            {
-                name: '近5天平均交易量',
-                type: 'line',
-                yAxisIndex: 0,
-                tooltip: {
-                    valueFormatter: function (value) {
-                        return value;
-                    }
-                },
-                smooth: true,
-                data: ${volumeAvgs}
-            },
-            {
-                name: '换手率',
-                type: 'line',
-                yAxisIndex: 1,
-                tooltip: {
-                    valueFormatter: function (value) {
-                        return value;
-                    }
-                },
-                smooth: true,
-                data: ${turnovers}
-            }
-        ]
-    };
-
-    if (option && typeof option === 'object') {
-        volumeChart.setOption(option);
-    }
-
-    window.addEventListener('resize', volumeChart.resize);
-</script>
 </html>
