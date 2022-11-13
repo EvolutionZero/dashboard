@@ -3,10 +3,13 @@ package com.zero.dashboard.service.imp;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
+import com.zero.dashboard.component.DailyReporter;
 import com.zero.dashboard.component.KLineReporter;
 import com.zero.dashboard.component.Reporter;
 import com.zero.dashboard.dto.bo.VolumeInfo;
+import com.zero.dashboard.dto.ctx.DailyReportContext;
 import com.zero.dashboard.dto.ctx.VelocityParamsContext;
+import com.zero.dashboard.dto.request.KLineReportRequest;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
 import com.zero.dashboard.entity.*;
@@ -49,19 +52,50 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private VolumeRatioBaseResultMapper volumeRatioBaseResultMapper;
 
+    @Autowired
+    private DailyReporter dailyReporter;
+
     @Override
     public ScreenshotResponse screenshot(ScreenshotRequest request) {
         return reporter.export(request);
     }
 
     @Override
-    public ScreenshotResponse kline(ScreenshotRequest request) {
-        return kLineReporter.exec(request);
+    public void kline(KLineReportRequest request) {
+        DailyReportContext ctx = new DailyReportContext();
+        ctx.setCode(request.getCode());
+        ctx.setName(request.getName());
+        ctx.setFileName(request.getFileName());
+        ctx.setBucketName(request.getBucketName());
+        ctx.setObjectPath(request.getObjectPath());
+        ctx.setTemplateName("velocity/klineTemplate.vm");
+        ctx.setParams(generateKLineVelocityParams(new VelocityParamsContext( request)));
+        dailyReporter.exec(ctx);
     }
 
+    private Map<String, Object> generateKLineVelocityParams(VelocityParamsContext ctx){
+        Stock stock = ctx.getStock();
+        int backoff = ctx.getBackoff();
+        int forward = ctx.getForward();
+        LocalDate focusDate = ctx.getFocusDate();
+        Map<String, Object> params = new HashMap<>();
+        LocalDate startDate = null;
+        LocalDate endDate = null;
+        String code = stock.getCode();
+        if(focusDate != null){
+            startDate = dailyMapper.getBackoffTradeDate(code, focusDate, Math.abs(backoff));
+            endDate = dailyMapper.getForwardTradeDate(code, focusDate, Math.abs(forward));
+        }
+        params.putAll(generateExtremeParams(startDate, endDate, code));
+        params.putAll(generateKLineParams(startDate, endDate, code, focusDate));
 
+        params.put("title", stock.getCode() + "_" + stock.getName() + (focusDate != null ? "_" + focusDate.format(DateTimeFormatter.ISO_DATE) : ""));
+        params.put("stockName", stock.getName());
+        params.put("scriptHomePath", System.getProperty("script.home.path", "D:/IdeaProjects/eagle-eye/src/main/resources/velocity"));
+        return params;
+    }
 
-    public Map<String, Object> generateVelocityParams(VelocityParamsContext ctx){
+    private Map<String, Object> generateWholeVelocityParams(VelocityParamsContext ctx){
         Stock stock = ctx.getStock();
         int backoff = ctx.getBackoff();
         int forward = ctx.getForward();
@@ -79,9 +113,6 @@ public class ReportServiceImpl implements ReportService {
         params.putAll(generateKdjParams(startDate, endDate, code));
         params.putAll(generateMacdsParams(startDate, endDate, code));
         params.putAll(generateVolumeAndTurnoverParams(startDate, endDate, code));
-
-
-
 
         params.put("title", stock.getCode() + "_" + stock.getName() + (focusDate != null ? "_" + focusDate.format(DateTimeFormatter.ISO_DATE) : ""));
         params.put("stockName", stock.getName());
