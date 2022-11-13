@@ -74,14 +74,14 @@ public class ReportServiceImpl implements ReportService {
     }
 
     private Map<String, Object> generateKLineVelocityParams(VelocityParamsContext ctx){
-        Stock stock = ctx.getStock();
         int backoff = ctx.getBackoff();
         int forward = ctx.getForward();
         LocalDate focusDate = ctx.getFocusDate();
         Map<String, Object> params = new HashMap<>();
         LocalDate startDate = null;
         LocalDate endDate = null;
-        String code = stock.getCode();
+        String code = ctx.getCode();
+        String name = ctx.getName();
         if(focusDate != null){
             startDate = dailyMapper.getBackoffTradeDate(code, focusDate, Math.abs(backoff));
             endDate = dailyMapper.getForwardTradeDate(code, focusDate, Math.abs(forward));
@@ -89,21 +89,20 @@ public class ReportServiceImpl implements ReportService {
         params.putAll(generateExtremeParams(startDate, endDate, code));
         params.putAll(generateKLineParams(startDate, endDate, code, focusDate));
 
-        params.put("title", stock.getCode() + "_" + stock.getName() + (focusDate != null ? "_" + focusDate.format(DateTimeFormatter.ISO_DATE) : ""));
-        params.put("stockName", stock.getName());
+        params.put("title", code + "_" + name + (focusDate != null ? "_" + focusDate.format(DateTimeFormatter.ISO_DATE) : ""));
+        params.put("stockName", name);
         params.put("scriptHomePath", System.getProperty("script.home.path", "D:/IdeaProjects/eagle-eye/src/main/resources/velocity"));
         return params;
     }
 
     private Map<String, Object> generateWholeVelocityParams(VelocityParamsContext ctx){
-        Stock stock = ctx.getStock();
         int backoff = ctx.getBackoff();
         int forward = ctx.getForward();
         LocalDate focusDate = ctx.getFocusDate();
         Map<String, Object> params = new HashMap<>();
         LocalDate startDate = null;
         LocalDate endDate = null;
-        String code = stock.getCode();
+        String code = ctx.getCode();
         if(focusDate != null){
             startDate = dailyMapper.getBackoffTradeDate(code, focusDate, Math.abs(backoff));
             endDate = dailyMapper.getForwardTradeDate(code, focusDate, Math.abs(forward));
@@ -114,8 +113,8 @@ public class ReportServiceImpl implements ReportService {
         params.putAll(generateMacdsParams(startDate, endDate, code));
         params.putAll(generateVolumeAndTurnoverParams(startDate, endDate, code));
 
-        params.put("title", stock.getCode() + "_" + stock.getName() + (focusDate != null ? "_" + focusDate.format(DateTimeFormatter.ISO_DATE) : ""));
-        params.put("stockName", stock.getName());
+        params.put("title", ctx.getCode() + "_" + ctx.getName() + (focusDate != null ? "_" + focusDate.format(DateTimeFormatter.ISO_DATE) : ""));
+        params.put("stockName", ctx.getName());
         params.put("scriptHomePath", System.getProperty("script.home.path", "D:/IdeaProjects/eagle-eye/src/main/resources/velocity"));
         return params;
     }

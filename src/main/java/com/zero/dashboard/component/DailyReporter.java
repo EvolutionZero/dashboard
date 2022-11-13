@@ -36,13 +36,13 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class DailyReporter {
 
-    @Value("minio.url")
+    @Value("${minio.url}")
     private String minioUrl;
 
-    @Value("minio.username")
+    @Value("${minio.username}")
     private String minioUsernmae;
 
-    @Value("minio.password")
+    @Value("${minio.password}")
     private String minioPassword;
 
     public void exec(DailyReportContext ctx) {
