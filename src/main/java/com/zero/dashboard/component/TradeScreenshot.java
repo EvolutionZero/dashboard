@@ -43,7 +43,7 @@ public class TradeScreenshot {
         driver.manage().window().maximize();
         DRIVER = driver;
         Actions actions = new Actions(DRIVER);
-        actions.moveByOffset(1000, 0).perform();
+        actions.moveByOffset(920, 0).perform();
     }
 
     public BufferedImage exec(String url, List<String> divs){

@@ -82,7 +82,7 @@ public class ReportServiceImpl implements ReportService {
         ctx.setObjectPath(request.getObjectPath());
         ctx.setTemplateName("velocity/klineTemplate.vm");
         ctx.setParams(generateKLineVelocityParams(new VelocityParamsContext( request)));
-        ctx.setDivs(Lists.newArrayList("kline"));
+        ctx.setDivs(Lists.newArrayList("kline", "placeholder"));
         dailyReporter.exec(ctx);
     }
 
