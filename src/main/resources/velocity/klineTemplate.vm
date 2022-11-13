@@ -6,7 +6,7 @@
 </head>
 <body style="height: 100%; margin: 0">
     <div id="kline" style="height: 100%"></div>
-    <div id="placeholder" style="height: 100%"></div>
+    <div id="placeholder"  style="height: 3px; width: 100%"></div>
 </body>
 <script type="text/javascript" src="${scriptHomePath}/jquery"></script>
 <script type="text/javascript" src="${scriptHomePath}/echarts.zero.js"></script>
