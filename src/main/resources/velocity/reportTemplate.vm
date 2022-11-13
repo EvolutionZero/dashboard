@@ -225,6 +225,10 @@
                             borderColor: undefined,
                             borderColor0: undefined
                         },
+                        markLine: {
+                            symbol: ['none', 'none'],
+                            data: ${markLineData}
+                        },
                         <!-- tooltip无效 -->
                         tooltip: {
                             formatter: function (param) {
