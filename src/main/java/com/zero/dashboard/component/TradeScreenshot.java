@@ -3,11 +3,13 @@ package com.zero.dashboard.component;
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.system.OsInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -51,8 +53,13 @@ public class TradeScreenshot {
         stopWatch.stop();
 
         stopWatch.start("等待渲染完成");
-        new WebDriverWait(DRIVER, 5, 3).until(d -> ((JavascriptExecutor) d)
-                .executeScript("return document.readyState").equals("complete"));
+//        new WebDriverWait(DRIVER, 5, 3).until(d -> ((JavascriptExecutor) d)
+//                .executeScript("return document.readyState").equals("complete"));
+        WebDriverWait wait = new WebDriverWait(DRIVER,5);
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("kline"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("volume"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("macd"))).click();
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("kdj"))).click();
         stopWatch.stop();
 
         stopWatch.start("截图");
