@@ -1,0 +1,11 @@
+feign:
+  httpclient:
+    connection-timeout: 30000
+    enabled: false
+  okhttp:
+    enabled: true
+ribbon:
+  ConnectTimeout: 5000
+  ReadTimeout: 5000
+mybatis:
+  mapper-locations: 'classpath:mapper/*.xml'

@@ -13,6 +13,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -33,6 +34,14 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class KLineReporter {
 
+    @Value("minio.url")
+    private String minioUrl;
+
+    @Value("minio.username")
+    private String minioUsernmae;
+
+    @Value("minio.password")
+    private String minioPassword;
 
     public ScreenshotResponse exec(ScreenshotRequest request) {
 
@@ -107,8 +116,8 @@ public class KLineReporter {
             InputStream is = new ByteArrayInputStream(os.toByteArray());
 
             MinioClient minioClient = MinioClient.builder()
-                    .endpoint("http://192.168.3.140:9000/")
-                    .credentials("admin","admin123")
+                    .endpoint(minioUrl)
+                    .credentials(minioUsernmae,minioPassword)
                     .build();
             String bucketName = "test";
             boolean found = minioClient.bucketExists(BucketExistsArgs.
