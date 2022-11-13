@@ -1,6 +1,11 @@
 cd dashboard
+git branch
 git log -1
 mvn clean package -Dmaven.test.skip=true
+rc=$?
+if [[ $rc -ne '0' ]] ; then
+  echo '编译失败'; exit $rc
+fi
 docker rm -f $(docker ps --filter "name=dashboard" -q -a)
 docker images | grep "dashboard" | awk '{print $1":"$2}' | xargs docker rmi
 docker build -t dashboard .
