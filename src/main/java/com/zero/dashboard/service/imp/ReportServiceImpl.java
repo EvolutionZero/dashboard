@@ -1,5 +1,6 @@
 package com.zero.dashboard.service.imp;
 
+import com.zero.dashboard.component.KLineReporter;
 import com.zero.dashboard.component.Reporter;
 import com.zero.dashboard.dto.request.ScreenshotRequest;
 import com.zero.dashboard.dto.response.ScreenshotResponse;
@@ -13,6 +14,9 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private Reporter reporter;
 
+    @Autowired
+    private KLineReporter kLineReporter;
+
     @Override
     public ScreenshotResponse screenshot(ScreenshotRequest request) {
         return reporter.export(request);
@@ -20,6 +24,6 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public ScreenshotResponse kline(ScreenshotRequest request) {
-        return reporter.export(request);
+        return kLineReporter.exec(request);
     }
 }
