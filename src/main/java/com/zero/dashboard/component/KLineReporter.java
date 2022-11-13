@@ -89,7 +89,7 @@ public class KLineReporter {
         properties.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
         VelocityEngine engine = new VelocityEngine();
         engine.init(properties);
-        String templateName = "velocity/kLineReporter.vm";
+        String templateName = "velocity/klineTemplate.vm";
 
         StringWriter stringWriter = new StringWriter();
         Template template = engine.getTemplate(templateName, "UTF-8");
