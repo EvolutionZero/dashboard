@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.dashboard.mapper.MacdBaseResultMapper">
+
+    <insert id="saveAll">
+        INSERT INTO macd_base_result (code, "date", l, s, mid, "cross", turn, line_trend, macd_trend, pre_dif, cur_dif, dif_angle, pre_dea, cur_dea, dea_angle, pre_macd, cur_macd, macd_angle, inclination)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.code},#{item.date},#{item.l},#{item.s},#{item.mid},#{item.cross},#{item.turn},#{item.lineTrend},#{item.macdTrend},#{item.preDif},#{item.curDif},#{item.difAngle},#{item.preDea},#{item.curDea},#{item.deaAngle},#{item.preMacd},#{item.curMacd},#{item.macdAngle},#{item.inclination})
+        </foreach>
+        ON conflict(code, "date", l, s, mid) DO NOTHING
+    </insert>
+
+</mapper>

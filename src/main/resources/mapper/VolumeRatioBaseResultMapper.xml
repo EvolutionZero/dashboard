@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.dashboard.mapper.VolumeRatioBaseResultMapper">
+
+    <insert id="saveAll">
+        INSERT INTO volume_ratio_base_result (code, "date", trading_volume, "avg", volume_ratio, status, "desc")
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.code},#{item.date},#{item.tradingVolume},#{item.avg},#{item.volumeRatio},#{item.status},#{item.desc})
+        </foreach>
+        ON conflict(code, "date") DO NOTHING
+    </insert>
+
+</mapper>

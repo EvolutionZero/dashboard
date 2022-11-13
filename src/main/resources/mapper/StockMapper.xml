@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.dashboard.mapper.StockMapper">
+
+    <insert id="saveAll">
+        INSERT INTO stock (code, "name", exchange, list_date, ts_code, area, industry, full_name, en_name, market, curr_type, list_status, delist_date, is_hs)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.code},#{item.name},#{item.exchange},#{item.listDate},#{item.tsCode},#{item.area},#{item.industry},#{item.fullName},#{item.enName},#{item.market},#{item.currType},#{item.listStatus},#{item.delistDate},#{item.isHs})
+        </foreach>
+        ON conflict(exchange, code) DO UPDATE
+        SET "name" = excluded.name, list_status = excluded.list_status , delist_date = excluded.delist_date
+    </insert>
+
+</mapper>

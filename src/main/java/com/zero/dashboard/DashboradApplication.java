@@ -5,12 +5,14 @@ import com.zero.dashboard.component.LongPictureScreenshot;
 import com.zero.dashboard.component.TouTiaoScreenshot;
 import com.zero.dashboard.component.Web2Pdf;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Date;
 
 @Slf4j
+@MapperScan("com.zero.dashboard.mapper")
 @SpringBootApplication
 public class DashboradApplication {
 

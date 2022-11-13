@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.dashboard.mapper.MacdMapper">
+
+
+    <insert id="saveAll">
+        INSERT INTO macd (code, "date", l, s, mid, dif, dea, macd, s_ema, l_ema)
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.code},#{item.date},#{item.l},#{item.s},#{item.mid},#{item.dif},#{item.dea},#{item.macd},#{item.sEma},#{item.lEma})
+        </foreach>
+        ON conflict(code, "date", l, s, mid) DO NOTHING
+    </insert>
+
+    <select id="analyse" resultType="com.zero.dashboard.entity.MacdBaseResult">
+        <![CDATA[
+        with compare as (
+                    select
+                        m2.code,
+                        m2.date,
+                        m2.s,
+                        m2.l,
+                        m2.mid,
+                        m.dif as pre_dif,
+                        m.dea as pre_dea,
+                        m.macd as pre_macd,
+                        m2.dif as cur_dif,
+                        m2.dea as cur_dea,
+                        m2.macd as cur_macd
+                    from
+                        (
+                            select
+                                row_number() over (
+         order by
+          m."date" asc) as rownum,
+                                *
+                            from
+                                macd m
+                            where
+                                code = #{code} and date >= (case when #{date} is null then to_date('1970-01-01', 'yyyy-mm-dd')  else #{date}  end)) as m
+                            right join (
+                            select
+                                row_number() over (
+         order by
+          m."date" asc) as rownum,
+                                *
+                            from
+                                macd m
+                            where
+                                code = #{code} and date >= (case when #{date} is null then to_date('1970-01-01', 'yyyy-mm-dd')  else #{date}  end)) m2 on
+                                m.code = m2.code
+                                and m.rownum = m2.rownum - 1
+                    order by
+                        m2.date
+                ) ,
+                     base_result as (
+                         select
+                             code,
+                    date,
+                    s,
+                    l,
+                    mid,
+                    pre_dif,
+                    cur_dif,
+                    degrees(atan(cur_dif - pre_dif)) as dif_angle,
+                    pre_dea,
+                    cur_dea,
+                    degrees(atan(cur_dea - pre_dea)) as dea_angle,
+                    pre_macd,
+                    cur_macd,
+                    degrees(atan(cur_macd - pre_macd)) as macd_angle,
+                    case
+                    when cur_dif > pre_dif and pre_dif < pre_dea
+                    and cur_dif > cur_dea then 'MACD金叉'
+                    when cur_dif < pre_dif and pre_dif > pre_dea
+                    and cur_dif < cur_dea then 'MACD死叉'
+                    else null
+                end as cross,
+          case
+           when pre_macd < 0
+           and cur_macd > 0 then '由空头转为多头'
+           when pre_macd > 0
+           and cur_macd < 0 then '由多头转为空头'
+           else null
+                end as turn,
+          case
+           when cur_dif > 0
+           and cur_dea > 0 then '多头市场'
+           when cur_dif < 0
+           and cur_dea < 0 then '空头市场'
+           else null
+                end as line_trend,
+          case
+           when cur_macd > 0 then '多头市场'
+           when cur_macd < 0 then '空头市场'
+           else null
+                end as macd_trend
+         from
+          compare
+        )
+
+        select
+            *, dif_angle - dea_angle as inclination
+        from
+            base_result
+        ]]>
+    </select>
+
+
+</mapper>
