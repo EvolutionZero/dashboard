@@ -1,19 +1,18 @@
 package com.zero.dashboard;
 
 import cn.hutool.system.OsInfo;
-import com.zero.dashboard.component.LongPictureScreenshot;
-import com.zero.dashboard.component.TouTiaoScreenshot;
-import com.zero.dashboard.component.Web2Pdf;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.kafka.annotation.EnableKafka;
 
 import java.util.Date;
 
 @Slf4j
 @MapperScan("com.zero.dashboard.mapper")
 @SpringBootApplication
+@EnableKafka
 public class DashboradApplication {
 
     public static void main(String[] args) {
