@@ -23,6 +23,10 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfiguration {
 
+    public String[] getGroupInstanceId(){
+        return  new String[]{"group.instance.id=abcd"};
+    }
+
     @Bean
     public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory(ConsumerFactory<String, Object> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
@@ -30,9 +34,9 @@ public class KafkaConsumerConfiguration {
 //        factory.setConsumerFactory(consumerFactory());
         factory.setConsumerFactory(consumerFactory);
         //设置是否开启批量监听
-        factory.setBatchListener(false);
-        //设置消费者组中的线程数量
-        factory.setConcurrency(1);
+//        factory.setBatchListener(false);
+//        //设置消费者组中的线程数量
+//        factory.setConcurrency(1);
         return factory;
     }
 
