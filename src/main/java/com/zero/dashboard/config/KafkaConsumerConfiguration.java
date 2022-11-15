@@ -24,10 +24,11 @@ import java.util.Map;
 public class KafkaConsumerConfiguration {
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory() {
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, String>> kafkaListenerContainerFactory(ConsumerFactory<String, Object> consumerFactory) {
         ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         //设置 consumerFactory
-        factory.setConsumerFactory(consumerFactory());
+//        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(consumerFactory);
         //设置是否开启批量监听
         factory.setBatchListener(false);
         //设置消费者组中的线程数量
