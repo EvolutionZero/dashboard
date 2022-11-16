@@ -12,7 +12,7 @@ import java.util.Date;
 @Slf4j
 @MapperScan("com.zero.dashboard.mapper")
 @SpringBootApplication
-@EnableKafka
+//@EnableKafka
 public class DashboradApplication {
 
     public static void main(String[] args) {
@@ -24,13 +24,6 @@ public class DashboradApplication {
             fileHomePath = "/opt/selenium/opt/dashboard/report/";
         }
         SpringApplication.run(DashboradApplication.class, args);
-
-//                log.info("头条截图");
-//        try {
-//            new TouTiaoScreenshot().exec("https://www.toutiao.com/article/7087963907754590757", fileHomePath + "TouTiao_" + new Date().getTime() + ".png");
-//        } catch (Exception e) {
-//            log.error("", e);
-//        }
 
     }
 
